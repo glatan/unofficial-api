@@ -15,7 +15,8 @@ pub struct Reschedule {
 #[derive(Serialize, Deserialize, Clone, Debug, Default)]
 struct Body {
     date: String,
-    class_num: String,
+    #[serde(rename(serialize = "classNumber"))]
+    class_number: String,
     program: String,
     pub class: Vec<Class>,
     option: String,
@@ -106,10 +107,10 @@ impl Response {
         Ok(())
     }
     pub fn parse(&mut self) -> Result<Reschedule, Error> {
-        // <date> <class_num> <program> <class_count> |loop <class + teacher>|
+        // <date> <class_number> <program> <class_count> |loop <class + teacher>|
         // <11月12日(火)> <3-S> <[3限] 学修時間、[4限]LHR → [3・4限]> <熱力学概論（佐伯）【入替】>
         // <\d+月\d+日> <(\w-\w)|(専.+\d)> <\[(\d|\d・\d)限\]>(if '、' loop) <.+（.+）【.+】>|<.+\s【.+】>
-        let core_regex = Regex::new(r"(?P<date>\d+月\d+日)\(.+\)\s(?P<class_num>(\w-\w)|(専.+)\S+)\s(\((?P<program>.+)\)|\[)").unwrap();
+        let core_regex = Regex::new(r"(?P<date>\d+月\d+日)\(.+\)\s(?P<class_number>(\w-\w)|(専.+)\S+)\s(\((?P<program>.+)\)|\[)").unwrap();
         let mut ju: Vec<(Body, Body)> = Default::default();
         for content in &self.ju {
             let mut before: Body = Default::default();
@@ -118,7 +119,7 @@ impl Response {
                     Some(t) => t.as_str().to_string(),
                     None => String::new(),
                 };
-                before.class_num = match caps.name("class_num") {
+                before.class_number = match caps.name("class_number") {
                     Some(t) => t.as_str().to_string(),
                     None => String::new(),
                 };
@@ -163,9 +164,9 @@ impl Response {
             //         Some(t) => t.as_str().to_string(),
             //         None => before.date.clone()
             //     };
-            //     after.class_num = match caps.name("class_num") {
+            //     after.class_number = match caps.name("class_number") {
             //         Some(t) => t.as_str().to_string(),
-            //         None => before.class_num.clone()
+            //         None => before.class_number.clone()
             //     };
             //     after.program = match caps.name("program") {
             //         Some(t) => t.as_str().to_string(),
@@ -200,8 +201,8 @@ impl Response {
             if after.date == String::new() {
                 after.date = before.date.clone();
             }
-            if after.class_num == String::new() {
-                after.class_num = before.class_num.clone();
+            if after.class_number == String::new() {
+                after.class_number = before.class_number.clone();
             }
             if after.program == String::new() {
                 after.program = before.program.clone();
@@ -216,7 +217,7 @@ impl Response {
                     Some(t) => t.as_str().to_string(),
                     None => String::new(),
                 };
-                before.class_num = match caps.name("class_num") {
+                before.class_number = match caps.name("class_number") {
                     Some(t) => t.as_str().to_string(),
                     None => String::new(),
                 };
@@ -263,7 +264,7 @@ impl Response {
                     Some(t) => t.as_str().to_string(),
                     None => String::new(),
                 };
-                before.class_num = match caps.name("class_num") {
+                before.class_number = match caps.name("class_number") {
                     Some(t) => t.as_str().to_string(),
                     None => String::new(),
                 };
