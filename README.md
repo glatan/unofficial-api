@@ -39,7 +39,7 @@ Podmanで実行したい場合は"docker"を"podman"に置き換えて実行す�
             // 変更前
             {
                 "date": "12月2日", // 日付
-                "class_num": "4-S", // クラス
+                "classNumber": "4-S", // クラス
                 "program": "", // なんとかかんとかプログラム(e.g 数学・物理科学プログラム)
                 "class": [ // 授業情報
                     {
@@ -54,7 +54,7 @@ Podmanで実行したい場合は"docker"を"podman"に置き換えて実行す�
             // 変更がない要素は変更前のものと同じになる
             {
                 "date": "12月2日",
-                "class_num": "4-S",
+                "classNumber": "4-S",
                 "program": "",
                 "class": [],
                 "option": ""
@@ -66,7 +66,7 @@ Podmanで実行したい場合は"docker"を"podman"に置き換えて実行す�
         // 繰り返し
         {
             "date": "12月20日",
-            "class_num": "1-3",
+            "classNumber": "1-3",
             "program": "",
             "class": [],
             "option": ""
@@ -77,7 +77,7 @@ Podmanで実行したい場合は"docker"を"podman"に置き換えて実行す�
         // 繰り返し
         {
             "date": "12月5日",
-            "class_num": "1-1",
+            "classNumber": "1-1",
             "program": "",
             "class": [],
             "option": ""
