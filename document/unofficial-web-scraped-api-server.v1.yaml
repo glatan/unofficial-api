@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  title: Unofficial
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths: {}
+components:
+  schemas:
+    MovedClass:
+      title: MovedClasswork
+      type: object
+      description: 日時が移動した授業
+      properties:
+        id:
+          type: string
+        before:
+          type: object
+          required:
+            - className
+            - date
+            - period
+            - note
+            - teacher
+          properties:
+            className:
+              type: string
+            date:
+              type: string
+              format: date
+            period:
+              type: string
+              description: 時限
+            note:
+              type: string
+              description: 備考
+            teacher:
+              type: string
+        after:
+          type: object
+          required:
+            - className
+            - date
+            - period
+            - note
+            - teacher
+          properties:
+            className:
+              type: string
+            date:
+              type: string
+            period:
+              type: string
+            note:
+              type: string
+            teacher:
+              type: string
+        classNumber:
+          type: string
+          description: 開講クラス
+      required:
+        - id
+        - before
+        - after
+        - classNumber
+    CanceledClass:
+      title: CanceledClass
+      type: object
+      description: 休講になった授業
+      properties:
+        id:
+          type: string
+        className:
+          type: string
+          description: 授業名
+        period:
+          type: string
+          description: 時限
+        date:
+          type: string
+          format: date
+        teacher:
+          type: string
+        note:
+          type: string
+      required:
+        - id
+        - className
+        - period
+        - date
+        - teacher
+        - note
