@@ -90,3 +90,27 @@ components:
         - date
         - teacher
         - note
+    SupplymentalyClass:
+      title: SupplymentalyClass
+      type: object
+      description: 補講
+      properties:
+        id:
+          type: string
+        className:
+          type: string
+        period:
+          type: string
+        date:
+          type: string
+        teacher:
+          type: string
+        note:
+          type: string
+      required:
+        - id
+        - className
+        - period
+        - date
+        - teacher
+        - note
