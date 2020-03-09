@@ -4,7 +4,68 @@ info:
   version: '1.0'
 servers:
   - url: 'http://localhost:3000'
-paths: {}
+paths:
+  /api/classes/canceled:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: 直近10件のみ取得 (系を選択が行われたら、その系の10件を取得)
+                maxItems: 10
+                items:
+                  $ref: '#/components/schemas/CanceledClass'
+      operationId: get-api-classes-canceled
+      description: |-
+        休講になったクラスの一覧を取得
+
+        ※ページングなし
+      requestBody: {}
+  /api/classes/moved:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 10
+                description: 直近10件のみ取得 (系を選択が行われたら、その系の10件を取得)
+                items:
+                  $ref: '#/components/schemas/MovedClass'
+      operationId: get-api-classes-moved
+      description: |-
+        移動になったクラスの一覧を取得
+
+        ※ページングなし
+  /api/classes/supplymentaly:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 10
+                description: 直近10件のみ取得 (系を選択が行われたら、その系の10件を取得)
+                items:
+                  $ref: '#/components/schemas/SupplymentalyClass'
+      operationId: get-api-classes-supplymentaly
+      description: |-
+        補講一覧を取得
+
+        ※ページングなし
 components:
   schemas:
     MovedClass:
