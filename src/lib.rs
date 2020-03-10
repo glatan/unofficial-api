@@ -5,5 +5,5 @@ mod parse;
 mod scrape;
 
 // pub use self::reschedule::{Reschedule, Response};
-pub use self::classes::Canceled;
-pub use self::scrape::{Classes, Scrape};
+pub use self::classes::{Canceled, Supplymentaly};
+pub use self::scrape::{Classes ,Scrape};
