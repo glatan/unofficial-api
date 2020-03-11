@@ -5,7 +5,7 @@ use scraper::{Html, Selector};
 pub enum Classes {
     Canceled,
     Moved,
-    Supplymentaly,
+    Supplementary,
 }
 
 #[derive(Debug)]
@@ -70,7 +70,7 @@ impl Scrape {
                 }
                 self.0 = ju
             }
-            Classes::Supplymentaly => {
+            Classes::Supplementary => {
                 if ho.is_empty() {
                     return Err(());
                 }

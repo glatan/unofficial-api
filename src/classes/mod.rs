@@ -1,7 +1,7 @@
 mod canceled;
 mod moved;
-mod supplymentaly;
+mod supplementary;
 
 pub use canceled::Canceled;
 pub use moved::Moved;
-pub use supplymentaly::Supplymentaly;
+pub use supplementary::Supplementary;

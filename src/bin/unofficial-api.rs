@@ -1,7 +1,7 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use chrono::prelude::*;
 use serde_json;
-use unofficial_api::{Canceled, Classes, Moved, Scrape, Supplymentaly};
+use unofficial_api::{Canceled, Classes, Moved, Scrape, Supplementary};
 
 fn get_jst_yyyymm() -> String {
     let dt = FixedOffset::east(9 * 3600);
@@ -69,11 +69,11 @@ async fn get_classes(class_type: Classes) -> impl Responder {
                         }
                     }
                 }
-                Classes::Supplymentaly => {
-                    let mut supplymentaly = Supplymentaly::new();
-                    if supplymentaly.parse(&yyyymm, &c).is_ok() {
+                Classes::Supplementary => {
+                    let mut supplementary = Supplementary::new();
+                    if supplementary.parse(&yyyymm, &c).is_ok() {
                         if resp.len() < 10 {
-                            resp.push(serde_json::to_string(&supplymentaly).unwrap());
+                            resp.push(serde_json::to_string(&supplementary).unwrap());
                         } else {
                             break;
                         }
@@ -99,8 +99,8 @@ async fn main() -> std::io::Result<()> {
                 web::get().to(|| get_classes(Classes::Moved)),
             )
             .route(
-                "/api/classes/supplymentaly/",
-                web::get().to(|| get_classes(Classes::Supplymentaly)),
+                "/api/classes/supplementary/",
+                web::get().to(|| get_classes(Classes::Supplementary)),
             )
     })
     .bind("127.0.0.1:8000")?
