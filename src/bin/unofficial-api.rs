@@ -1,7 +1,7 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use chrono::prelude::*;
 use serde_json;
-use unofficial_api::{Canceled, Classes, Scrape, Supplymentaly};
+use unofficial_api::{Canceled, Classes, Moved, Scrape, Supplymentaly};
 
 fn get_jst_yyyymm() -> String {
     let dt = FixedOffset::east(9 * 3600);
@@ -52,6 +52,16 @@ async fn get_classes(class_type: Classes) -> impl Responder {
                         }
                     }
                 }
+                Classes::Moved => {
+                    let mut moved = Moved::new();
+                    if moved.parse(&yyyymm, &c).is_ok() {
+                        if resp.len() < 10 {
+                            resp.push(serde_json::to_string(&moved).unwrap());
+                        } else {
+                            break;
+                        }
+                    }
+                }
                 Classes::Supplymentaly => {
                     let mut supplymentaly = Supplymentaly::new();
                     if supplymentaly.parse(&yyyymm, &c).is_ok() {
@@ -62,7 +72,6 @@ async fn get_classes(class_type: Classes) -> impl Responder {
                         }
                     }
                 }
-                _ => panic!("Yeah!"),
             }
         }
     }
@@ -77,6 +86,10 @@ async fn main() -> std::io::Result<()> {
             .route(
                 "/api/classes/canceled/",
                 web::get().to(|| get_classes(Classes::Canceled)),
+            )
+            .route(
+                "/api/classes/moved/",
+                web::get().to(|| get_classes(Classes::Moved)),
             )
             .route(
                 "/api/classes/supplymentaly/",
