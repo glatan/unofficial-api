@@ -1,4 +1,6 @@
-mod error;
-mod reschedule;
+mod classes;
+mod parse;
+mod scrape;
 
-pub use self::reschedule::{Reschedule, Response};
+pub use self::classes::{Canceled, Moved, Supplementary};
+pub use self::scrape::{Classes, Scrape};
