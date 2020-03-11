@@ -30,16 +30,23 @@ fn minus_one_month(yyyymm: &str) -> String {
 }
 
 async fn get_classes(class_type: Classes) -> impl Responder {
-    let mut resp = Vec::new();
+    let mut resp = Vec::with_capacity(10);
     let mut yyyymm = get_jst_yyyymm();
     // 10件取得
     while resp.len() < 10 {
-        let mut scrape = Scrape::new();
-        // "エラーが帰ってきたら一ヶ月前ので試してみる"を繰り返す
-        while let Err(_) = scrape.scrape(&yyyymm, class_type).await {
-            yyyymm = minus_one_month(&yyyymm);
+        let mut scrape_result = Vec::with_capacity(10);
+        while scrape_result.len() < 10 {
+            let mut scraper = Scrape::new();
+            // "エラーが帰ってきたら一ヶ月前ので試してみる"を繰り返す
+            while let Err(_) = scraper.scrape(&yyyymm, class_type).await {
+                yyyymm = minus_one_month(&yyyymm);
+            }
+            if scraper.0.len() < 10 {
+                yyyymm = minus_one_month(&yyyymm);
+            }
+            scrape_result.append(&mut scraper.0);
         }
-        for c in scrape.0 {
+        for c in scrape_result {
             println!("{:?}", c);
             match class_type {
                 Classes::Canceled => {

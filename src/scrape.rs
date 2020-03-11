@@ -44,37 +44,37 @@ impl Scrape {
         let mut ju = Vec::new();
         let mut ho = Vec::new();
         let mut kyu = Vec::new();
-        for content in contents.iter().take(contents.len() - 1) {
+        for content in contents {
             match content.as_str() {
                 "授業変更" => flag = String::from("ju"),
                 "補講" => flag = String::from("ho"),
                 "休講" => flag = String::from("kyu"),
                 _ => match flag.as_str() {
-                    "ju" => ju.push(content),
-                    "ho" => ho.push(content),
-                    "kyu" => kyu.push(content),
+                    "ju" => ju.push(content.to_string()),
+                    "ho" => ho.push(content.to_string()),
+                    "kyu" => kyu.push(content.to_string()),
                     _ => return Err(()),
                 },
             };
         }
         match classes {
             Classes::Canceled => {
-                if kyu.len() == 0 {
+                if kyu.is_empty() {
                     return Err(());
                 }
-                self.0 = kyu.iter().map(|&c| c.to_string()).collect::<Vec<String>>()
+                self.0 = kyu
             }
             Classes::Moved => {
-                if ju.len() == 0 {
+                if ju.is_empty() {
                     return Err(());
                 }
-                self.0 = ju.iter().map(|&c| c.to_string()).collect::<Vec<String>>()
+                self.0 = ju
             }
             Classes::Supplymentaly => {
-                if ho.len() == 0 {
+                if ho.is_empty() {
                     return Err(());
                 }
-                self.0 = ho.iter().map(|&c| c.to_string()).collect::<Vec<String>>()
+                self.0 = ho
             }
         }
         Ok(())
