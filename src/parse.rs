@@ -86,7 +86,7 @@ impl Parse {
                     period_range.push(number);
                 }
             }
-            for i in period_range[0]..period_range[1]+1 {
+            for i in period_range[0]..=period_range[1] {
                 class_info.periods.push(i)
             }
         };
