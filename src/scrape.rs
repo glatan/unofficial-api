@@ -59,10 +59,21 @@ impl Scrape {
         }
         match classes {
             Classes::Canceled => {
+                if kyu.len() == 0 {
+                    return Err(());
+                }
                 self.0 = kyu.iter().map(|&c| c.to_string()).collect::<Vec<String>>()
             }
-            Classes::Moved => self.0 = ju.iter().map(|&c| c.to_string()).collect::<Vec<String>>(),
+            Classes::Moved => {
+                if ju.len() == 0 {
+                    return Err(());
+                }
+                self.0 = ju.iter().map(|&c| c.to_string()).collect::<Vec<String>>()
+            }
             Classes::Supplymentaly => {
+                if ho.len() == 0 {
+                    return Err(());
+                }
                 self.0 = ho.iter().map(|&c| c.to_string()).collect::<Vec<String>>()
             }
         }

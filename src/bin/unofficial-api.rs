@@ -13,12 +13,12 @@ fn minus_one_month(yyyymm: &str) -> String {
     let (yyyy, mm) = yyyymm.split_at(4);
     let (subtracted_yyyy, subtracted_mm);
     if mm == "01" {
-        subtracted_yyyy = (yyyy.parse::<u8>().unwrap() - 1).to_string();
+        subtracted_yyyy = (yyyy.parse::<u16>().unwrap() - 1).to_string();
         subtracted_mm = "12".to_string();
     } else {
         subtracted_yyyy = yyyy.to_string();
         subtracted_mm = {
-            let m = (mm.parse::<u8>().unwrap() - 1).to_string();
+            let m = (mm.parse::<u16>().unwrap() - 1).to_string();
             match m.len() {
                 1 => "0".to_string() + &m,
                 2 => m,
