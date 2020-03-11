@@ -1,35 +1,72 @@
-use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use chrono::prelude::*;
 use serde_json;
-use unofficial_api::{Canceled, Supplymentaly, Classes, Scrape};
+use unofficial_api::{Canceled, Classes, Scrape, Supplymentaly};
 
-async fn get_canceled(req: HttpRequest) -> impl Responder {
-    let yyyymm = req.match_info().get("yyyymm").unwrap_or("202001");
-    let mut resp = Scrape::new();
-    resp.scrape(yyyymm, Classes::Canceled).await.unwrap();
-    let mut result: Vec<Canceled> = Vec::new();
-    for c in resp.0 {
-        let mut canceled = Canceled::new();
-        if canceled.parse(yyyymm, &c).is_ok() {
-            result.push(canceled);
-        }
-    }
-    let result_json = serde_json::to_string(&result).unwrap();
-    format!("{:?}", result_json)
+fn get_jst_yyyymm() -> String {
+    let dt = FixedOffset::east(9 * 3600);
+    let jst_now = Utc::now().with_timezone(&dt);
+    jst_now.format("%Y%m").to_string()
 }
 
-async fn get_supplymentaly(req: HttpRequest) -> impl Responder {
-    let yyyymm = req.match_info().get("yyyymm").unwrap_or("202001");
-    let mut resp = Scrape::new();
-    resp.scrape(yyyymm, Classes::Supplymentaly).await.unwrap();
-    let mut result: Vec<Supplymentaly> = Vec::new();
-    for c in resp.0 {
-        let mut supplymentaly = Supplymentaly::new();
-        if supplymentaly.parse(yyyymm, &c).is_ok() {
-            result.push(supplymentaly);
+fn minus_one_month(yyyymm: &str) -> String {
+    let (yyyy, mm) = yyyymm.split_at(4);
+    let (subtracted_yyyy, subtracted_mm);
+    if mm == "01" {
+        subtracted_yyyy = (yyyy.parse::<u8>().unwrap() - 1).to_string();
+        subtracted_mm = "12".to_string();
+    } else {
+        subtracted_yyyy = yyyy.to_string();
+        subtracted_mm = {
+            let m = (mm.parse::<u8>().unwrap() - 1).to_string();
+            match m.len() {
+                1 => "0".to_string() + &m,
+                2 => m,
+                _ => panic!("Invalid mm"),
+            }
+        };
+    }
+    subtracted_yyyy + &subtracted_mm
+}
+
+async fn get_classes(class_type: Classes) -> impl Responder {
+    let mut resp = Vec::new();
+    let mut yyyymm = get_jst_yyyymm();
+    // 10件取得
+    while resp.len() < 10 {
+        let mut scrape = Scrape::new();
+        // "エラーが帰ってきたら一ヶ月前ので試してみる"を繰り返す
+        while let Err(_) = scrape.scrape(&yyyymm, class_type).await {
+            yyyymm = minus_one_month(&yyyymm);
+        }
+        for c in scrape.0 {
+            println!("{:?}", c);
+            match class_type {
+                Classes::Canceled => {
+                    let mut canceled = Canceled::new();
+                    if canceled.parse(&yyyymm, &c).is_ok() {
+                        if resp.len() < 10 {
+                            resp.push(serde_json::to_string(&canceled).unwrap());
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                Classes::Supplymentaly => {
+                    let mut supplymentaly = Supplymentaly::new();
+                    if supplymentaly.parse(&yyyymm, &c).is_ok() {
+                        if resp.len() < 10 {
+                            resp.push(serde_json::to_string(&supplymentaly).unwrap());
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                _ => panic!("Yeah!"),
+            }
         }
     }
-    let result_json = serde_json::to_string(&result).unwrap();
-    format!("{:?}", result_json)
+    format!("{:?}", resp)
 }
 
 #[actix_rt::main]
@@ -37,8 +74,14 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .route("/", web::get().to(HttpResponse::Ok))
-            .route("/api/classes/canceled/", web::get().to(get_canceled))
-            .route("/api/classes/supplymentaly/", web::get().to(get_supplymentaly))
+            .route(
+                "/api/classes/canceled/",
+                web::get().to(|| get_classes(Classes::Canceled)),
+            )
+            .route(
+                "/api/classes/supplymentaly/",
+                web::get().to(|| get_classes(Classes::Supplymentaly)),
+            )
     })
     .bind("127.0.0.1:8000")?
     .run()
