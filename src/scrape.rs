@@ -1,6 +1,7 @@
 use reqwest;
 use scraper::{Html, Selector};
 
+#[derive(Copy, Clone)]
 pub enum Classes {
     Canceled,
     Moved,

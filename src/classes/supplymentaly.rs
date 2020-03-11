@@ -43,10 +43,7 @@ mod test {
         let sample = "12月20日(金) 1-3 [7・8限] 情報リテラシー（竹谷）【多目的ホールで実施】";
         let mut supplymentaly = Supplymentaly::new();
         supplymentaly.parse(sample_id, sample).unwrap();
-        assert_eq!(
-            supplymentaly.class_number,
-            "1-3".to_string()
-        );
+        assert_eq!(supplymentaly.class_number, "1-3".to_string());
     }
     #[test]
     fn parse_all() {
@@ -68,4 +65,3 @@ mod test {
         assert_eq!(supplymentaly, sample_result);
     }
 }
-

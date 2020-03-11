@@ -73,25 +73,21 @@ impl Parse {
             entry = other.trim_start();
         }
         // periods
-        let periods_regex = Regex::new(r"^\[(\d|\d・\d)限\]\s").unwrap();
+        let periods_regex = Regex::new(r"^\[(\d|\d・\d|\d～\d)限\]\s").unwrap();
         if let Some(periods_index) = periods_regex.find(entry) {
             let (periods, other) = entry.split_at(periods_index.end());
             entry = other.trim_start();
             // convert <periods> to [period, period]: Vec<u8>
-            let mut period: Vec<u8> = Vec::new();
+            // period_range: 要素は1つか2つ。2個あってその差が1以上なら2コマ以上
+            let mut period_range: Vec<u8> = Vec::new();
             for c in periods.chars() {
-                if c.to_string().parse::<u8>().is_err() {
-                    if period.is_empty() {
-                        continue;
-                    }
-                    let number_string: String = period.drain(..).map(|c| c.to_string()).collect();
-                    class_info
-                        .periods
-                        .push(number_string.parse::<u8>().unwrap());
-                }
+                // n限目のnが2桁になることは想定していない
                 if let Ok(number) = c.to_string().parse::<u8>() {
-                    period.push(number)
+                    period_range.push(number);
                 }
+            }
+            for i in period_range[0]..period_range[1]+1 {
+                class_info.periods.push(i)
             }
         };
         // teacher
@@ -112,8 +108,7 @@ impl Parse {
     pub fn class_number(entry: &str) -> Result<String, ()> {
         let mut class_number = String::new();
         // e.g. 4-S
-        let class_number_regex =
-            Regex::new(r"(?P<class_number>((\w-\w)|(専.+))\S*)").unwrap();
+        let class_number_regex = Regex::new(r"(?P<class_number>((\w-\w)|(専.+))\S*)").unwrap();
         if let Some(c) = class_number_regex.captures(entry) {
             class_number = c.name("class_number").unwrap().as_str().to_string();
         }
