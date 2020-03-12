@@ -3,11 +3,11 @@ use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Moved {
-    pub(crate) id: String,
+    id: String,
     #[serde(rename(serialize = "classNumber"))]
-    pub(crate) class_number: String,
-    pub(crate) before: Parse,
-    pub(crate) after: Parse,
+    class_number: String,
+    before: Parse,
+    after: Parse,
 }
 
 impl Moved {
