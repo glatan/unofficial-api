@@ -1,14 +1,13 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
-use chrono::prelude::*;
+// use chrono::prelude::*;
 use serde_json;
 use unofficial_api::{Canceled, Classes, Moved, Scrape, Supplementary};
 
-#[allow(dead_code)]
-fn get_jst_yyyymm() -> String {
-    let dt = FixedOffset::east(9 * 3600);
-    let jst_now = Utc::now().with_timezone(&dt);
-    jst_now.format("%Y%m").to_string()
-}
+// fn get_jst_yyyymm() -> String {
+//     let dt = FixedOffset::east(9 * 3600);
+//     let jst_now = Utc::now().with_timezone(&dt);
+//     jst_now.format("%Y%m").to_string()
+// }
 
 // yyyymmを1ヶ月巻き戻す処理
 // fn minus_one_month(yyyymm: &str) -> String {
@@ -42,7 +41,6 @@ async fn get_classes(class_type: Classes) -> impl Responder {
         return format!("{:?}", serde_json::to_string(&String::new()).unwrap());
     }
     for c in scraper.0 {
-        println!("{:?}", c);
         match class_type {
             Classes::Canceled => {
                 let mut canceled = Canceled::new();
