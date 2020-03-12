@@ -78,7 +78,7 @@ impl Parse {
             let (periods, other) = entry.split_at(periods_index.end());
             entry = other.trim_start();
             // convert <periods> to [period, period]: Vec<u8>
-            // period_range: 要素は1つか2つ。2個あってその差が1以上なら2コマ以上
+            // period_range: 要素は1つか2つ。2個の場合は
             let mut period_range: Vec<u8> = Vec::new();
             for c in periods.chars() {
                 // n限目のnが2桁になることは想定していない
@@ -86,8 +86,16 @@ impl Parse {
                     period_range.push(number);
                 }
             }
-            for i in period_range[0]..=period_range[1] {
-                class_info.periods.push(i)
+            if period_range.len() == 1 {
+                // 要素が1つの場合はそのまま追加
+                class_info.periods.push(period_range[0]);
+            } else if period_range.len() == 2 {
+                // 要素が2つの場合は1つ目から2つ目までの自然数を列挙
+                for i in period_range[0]..=period_range[1] {
+                    class_info.periods.push(i);
+                }
+            } else {
+                panic!("Period: {:?} is invalided value.", period_range);
             }
         };
         // teacher
@@ -95,8 +103,16 @@ impl Parse {
         if let Some(teacher_index) = teacher_regex.find(entry) {
             let (other, teacher) = entry.split_at(teacher_index.start());
             entry = other.trim_end();
-            let trim_matches: &[_] = &['（', '）'];
-            class_info.teacher = teacher.trim_matches(trim_matches).to_string();
+            // Why not "trim_matches()"?
+            // Cause:
+            // > let trim_matches: &[_] = &['（', '）'];
+            // > teacher.trim_matches(&trim_matches);
+            // 上のコードでは以下の例のようなことが起こるため
+            // 例: "（田中（太郎））" => "田中（太郎"
+            // "（", "）": どちらも1byte文字ではないのでバイト列にして区切る地点を決めている
+            let (_, teacher) = teacher.split_at("（".as_bytes().len());
+            let (teacher, _) = teacher.split_at(teacher.as_bytes().len() - "）".as_bytes().len());
+            class_info.teacher = teacher.to_string();
         }
         // class_name
         if !entry.is_empty() {
