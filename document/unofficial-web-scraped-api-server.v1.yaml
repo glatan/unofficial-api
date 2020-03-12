@@ -16,7 +16,7 @@ paths:
             application/json:
               schema:
                 type: array
-                description: 直近10件のみ取得 (系を選択が行われたら、その系の10件を取得)
+                description: その月の最大10件のみ取得
                 maxItems: 10
                 items:
                   $ref: '#/components/schemas/CanceledClass'
@@ -38,7 +38,7 @@ paths:
               schema:
                 type: array
                 maxItems: 10
-                description: 直近10件のみ取得 (系を選択が行われたら、その系の10件を取得)
+                description: その月の最大10件のみ取得
                 items:
                   $ref: '#/components/schemas/MovedClass'
       operationId: get-api-classes-moved
@@ -46,7 +46,7 @@ paths:
         移動になったクラスの一覧を取得
 
         ※ページングなし
-  /api/classes/supplymentaly:
+  /api/classes/supplementary:
     get:
       summary: Your GET endpoint
       tags: []
@@ -58,10 +58,10 @@ paths:
               schema:
                 type: array
                 maxItems: 10
-                description: 直近10件のみ取得 (系を選択が行われたら、その系の10件を取得)
+                description: その月の最大10件のみ取得
                 items:
-                  $ref: '#/components/schemas/SupplymentalyClass'
-      operationId: get-api-classes-supplymentaly
+                  $ref: '#/components/schemas/SupplementaryClass'
+      operationId: get-api-classes-supplementary
       description: |-
         補講一覧を取得
 
@@ -80,7 +80,7 @@ components:
           required:
             - className
             - date
-            - period
+            - periods
             - note
             - teacher
           properties:
@@ -89,9 +89,12 @@ components:
             date:
               type: string
               format: date
-            period:
-              type: string
+              description: YYYY-MM-DD
+            periods:
               description: 時限
+              type: array
+              items:
+                type: integer
             note:
               type: string
               description: 備考
@@ -102,7 +105,7 @@ components:
           required:
             - className
             - date
-            - period
+            - periods
             - note
             - teacher
           properties:
@@ -110,8 +113,12 @@ components:
               type: string
             date:
               type: string
-            period:
-              type: string
+              description: YYYY-MM-DD
+            periods:
+              type: array
+              description: ''
+              items:
+                type: integer
             note:
               type: string
             teacher:
@@ -134,25 +141,31 @@ components:
         className:
           type: string
           description: 授業名
-        period:
-          type: string
+        periods:
           description: 時限
+          type: array
+          items:
+            type: integer
         date:
           type: string
           format: date
+          description: YYYY-MM-DD
         teacher:
           type: string
         note:
           type: string
+        classNumber:
+          type: string
       required:
         - id
         - className
-        - period
+        - periods
         - date
         - teacher
         - note
-    SupplymentalyClass:
-      title: SupplymentalyClass
+        - classNumber
+    SupplementaryClass:
+      title: SupplementaryClass
       type: object
       description: 補講
       properties:
@@ -160,18 +173,24 @@ components:
           type: string
         className:
           type: string
-        period:
-          type: string
+        periods:
+          type: array
+          items:
+            type: integer
         date:
           type: string
+          format: date
+          description: YYYY-MM-DD
         teacher:
           type: string
         note:
           type: string
+        classNumber:
+          type: string
       required:
         - id
         - className
-        - period
+        - periods
         - date
         - teacher
         - note
