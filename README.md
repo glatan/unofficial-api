@@ -1,6 +1,6 @@
 # unofficial-api
 
-**スクレイピング部の挙動が不安定でレスポンスがなかったり情報が欠落したりなどが発生する**
+2019年度のコンフェスの作品(のAPI部分)
 
 ## Usage
 
@@ -9,7 +9,7 @@
 
 Podmanで実行したい場合は"docker"を"podman"に置き換えて実行すれば良い。(e.g make podman.serve)
 
-## Command
+## Makefile
 
 ### make docker.pull
 
@@ -26,61 +26,3 @@ Podmanで実行したい場合は"docker"を"podman"に置き換えて実行す�
 ### make docker.run-bash
 
 コンテナ内のBashにアクセスする
-
-## API Documentation
-
-* GET /yyyymm
-
-```json
-    // ju: 授業変更
-    "ju": [
-        // 繰り返し
-        [
-            // 変更前
-            {
-                "date": "12月2日", // 日付
-                "classNumber": "4-S", // クラス
-                "program": "", // なんとかかんとかプログラム(e.g 数学・物理科学プログラム)
-                "class": [ // 授業情報
-                    {
-                        "count": "1・2", // コマ数
-                        "name": "電磁気学", // 授業名
-                        "teacher": "香取" // 教員の名前
-                    }
-                ],
-                "option": "" // その他(juの変更前のみ確定で空)
-            },
-            // 変更後
-            // 変更がない要素は変更前のものと同じになる
-            {
-                "date": "12月2日",
-                "classNumber": "4-S",
-                "program": "",
-                "class": [],
-                "option": ""
-            }
-        ]
-    ],
-    // 補講
-    "ho": [
-        // 繰り返し
-        {
-            "date": "12月20日",
-            "classNumber": "1-3",
-            "program": "",
-            "class": [],
-            "option": ""
-        }
-    ],
-    // 休講
-    "kyu": [
-        // 繰り返し
-        {
-            "date": "12月5日",
-            "classNumber": "1-1",
-            "program": "",
-            "class": [],
-            "option": ""
-        }
-    ]
-```
