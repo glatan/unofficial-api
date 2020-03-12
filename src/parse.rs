@@ -103,9 +103,16 @@ impl Parse {
         if let Some(teacher_index) = teacher_regex.find(entry) {
             let (other, teacher) = entry.split_at(teacher_index.start());
             entry = other.trim_end();
-            println!("{:?}", teacher);
-            let trim_matches: &[_] = &['（', '）'];
-            class_info.teacher = teacher.trim_matches(trim_matches).to_string();
+            // Why not "trim_matches()"?
+            // Cause:
+            // > let trim_matches: &[_] = &['（', '）'];
+            // > teacher.trim_matches(&trim_matches);
+            // 上のコードでは以下の例のようなことが起こるため
+            // 例: "（田中（太郎））" => "田中（太郎"
+            // "（", "）": どちらも1byte文字ではないのでバイト列にして区切る地点を決めている
+            let (_, teacher) = teacher.split_at("（".as_bytes().len());
+            let (teacher, _) = teacher.split_at(teacher.as_bytes().len() - "）".as_bytes().len());
+            class_info.teacher = teacher.to_string();
         }
         // class_name
         if !entry.is_empty() {
