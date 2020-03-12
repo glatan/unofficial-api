@@ -23,7 +23,7 @@ impl Parse {
     }
     pub fn class_info(mut entry: &str) -> Result<Parse, ()> {
         // DO NOT CHANGE THE PARSE ORDER.
-        entry = entry.trim_start().trim_end();
+        entry = entry.trim();
         let mut class_info: Parse = Parse::new();
         // note
         let note_regex = Regex::new(r"(【.+】)+$").unwrap();

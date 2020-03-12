@@ -27,12 +27,12 @@ impl Moved {
         let (mut before, mut after) = (String::new(), String::new());
         if let Some(n) = entry.find('→') {
             let (b, a) = entry.split_at(n);
-            before = b.trim().to_string();
-            after = a.trim().trim_matches('→').trim().to_string();
+            before = b.to_string();
+            after = a.trim_start_matches('→').to_string();
         } else if let Some(n) = entry.find('←') {
             let (a, b) = entry.split_at(n);
-            before = b.trim().to_string();
-            after = a.trim().trim_matches('←').trim().to_string();
+            before = b.to_string();
+            after = a.trim_start_matches('←').to_string();
         }
         self.before = Parse::class_info(&before).unwrap();
         self.after = Parse::class_info(&after).unwrap();
