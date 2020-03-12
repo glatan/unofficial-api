@@ -24,7 +24,7 @@ impl Moved {
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
         self.id = id;
-        let (mut before, mut after) = (String::new(), String::new());
+        let (before, after);
         if let Some(n) = entry.find('→') {
             let (b, a) = entry.split_at(n);
             before = b.to_string();
@@ -33,6 +33,8 @@ impl Moved {
             let (a, b) = entry.split_at(n);
             before = b.to_string();
             after = a.trim_start_matches('←').to_string();
+        } else {
+            return Err(());
         }
         self.before = Parse::class_info(&before).unwrap();
         self.after = Parse::class_info(&after).unwrap();
