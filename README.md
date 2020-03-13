@@ -5,9 +5,11 @@
 ## Usage
 
 1. make docker.serve
-2. curl localhost:8000/{yyyymm}
+2. curl localhost:8000/api/classes/{canceled, moved, supplementary}
 
 Podmanで実行したい場合は"docker"を"podman"に置き換えて実行すれば良い。(e.g make podman.serve)
+
+コンフェス期間中は授業がないため2019年12月の情報をとってくるように設定しています。
 
 ## Makefile
 
