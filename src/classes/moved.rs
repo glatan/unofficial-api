@@ -3,11 +3,11 @@ use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Moved {
-    pub(crate) id: String,
+    id: String,
     #[serde(rename(serialize = "classNumber"))]
-    pub(crate) class_number: String,
-    pub(crate) before: Parse,
-    pub(crate) after: Parse,
+    class_number: String,
+    before: Parse,
+    after: Parse,
 }
 
 impl Moved {
@@ -24,15 +24,17 @@ impl Moved {
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
         self.id = id;
-        let (mut before, mut after) = (String::new(), String::new());
+        let (before, after);
         if let Some(n) = entry.find('→') {
             let (b, a) = entry.split_at(n);
-            before = b.trim().to_string();
-            after = a.trim().trim_matches('→').trim().to_string();
+            before = b.to_string();
+            after = a.trim_start_matches('→').to_string();
         } else if let Some(n) = entry.find('←') {
             let (a, b) = entry.split_at(n);
-            before = b.trim().to_string();
-            after = a.trim().trim_matches('←').trim().to_string();
+            before = b.to_string();
+            after = a.trim_start_matches('←').to_string();
+        } else {
+            return Err(());
         }
         self.before = Parse::class_info(&before).unwrap();
         self.after = Parse::class_info(&after).unwrap();
