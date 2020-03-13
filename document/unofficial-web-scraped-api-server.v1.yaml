@@ -46,7 +46,7 @@ paths:
         移動になったクラスの一覧を取得
 
         ※ページングなし
-  /api/classes/supplymentaly:
+  /api/classes/supplementary:
     get:
       summary: Your GET endpoint
       tags: []
@@ -60,8 +60,8 @@ paths:
                 maxItems: 10
                 description: 直近10件のみ取得 (系を選択が行われたら、その系の10件を取得)
                 items:
-                  $ref: '#/components/schemas/SupplymentalyClass'
-      operationId: get-api-classes-supplymentaly
+                  $ref: '#/components/schemas/SupplementaryClass'
+      operationId: get-api-classes-supplementary
       description: |-
         補講一覧を取得
 
@@ -151,8 +151,8 @@ components:
         - date
         - teacher
         - note
-    SupplymentalyClass:
-      title: SupplymentalyClass
+    SupplementaryClass:
+      title: SupplementaryClass
       type: object
       description: 補講
       properties:
