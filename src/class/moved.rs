@@ -36,9 +36,9 @@ impl Moved {
         } else {
             return Err(());
         }
-        self.before = Class::parse(&before).unwrap();
-        self.after = Class::parse(&after).unwrap();
-        self.class_number = ClassNumber::parse(&entry).unwrap();
+        self.before = Class::parse(&before)?;
+        self.after = Class::parse(&after)?;
+        self.class_number = ClassNumber::parse(&entry)?;
         // Class::parse(&mut self.entry).unwrap().date : MM-DD
         // Convert it to YYYY-MM-DD
         let (year, _) = self.id.split_at(4);

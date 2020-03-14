@@ -23,8 +23,8 @@ impl Supplementary {
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
         self.id = id;
-        self.class = Class::parse(&entry).unwrap();
-        self.class_number = ClassNumber::parse(&entry).unwrap();
+        self.class = Class::parse(&entry)?;
+        self.class_number = ClassNumber::parse(&entry)?;
         // Class::parse(&mut self.entry).unwrap().date : MM-DD
         // Convert it to YYYY-MM-DD
         let (year, _) = self.id.split_at(4);
