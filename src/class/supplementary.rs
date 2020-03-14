@@ -7,7 +7,7 @@ pub struct Supplementary {
     #[serde(rename(serialize = "classNumber"))]
     class_number: ClassNumber,
     #[serde(flatten)]
-    class_info: Class,
+    class: Class,
 }
 
 impl Supplementary {
@@ -15,7 +15,7 @@ impl Supplementary {
         Supplementary {
             id: String::new(),
             class_number: ClassNumber::new(),
-            class_info: Class::new(),
+            class: Class::new(),
         }
     }
     pub fn parse(&mut self, yyyymm: &str, entry: &str) -> Result<(), ()> {
@@ -23,12 +23,12 @@ impl Supplementary {
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
         self.id = id;
-        self.class_info = Class::parse(&entry).unwrap();
+        self.class = Class::parse(&entry).unwrap();
         self.class_number = ClassNumber::parse(&entry).unwrap();
         // Class::parse(&mut self.entry).unwrap().date : MM-DD
         // Convert it to YYYY-MM-DD
         let (year, _) = self.id.split_at(4);
-        self.class_info.date = format!("{}-{}", year, self.class_info.date);
+        self.class.date = format!("{}-{}", year, self.class.date);
         Ok(())
     }
 }
@@ -48,10 +48,10 @@ mod test {
                 program: "3".to_string(),
                 former_class: false,
             },
-            class_info: Class {
+            class: Class {
                 date: "2019-12-20".to_string(),
                 periods: [7, 8].to_vec(),
-                class_name: "情報リテラシー".to_string(),
+                name: "情報リテラシー".to_string(),
                 teacher: "竹谷".to_string(),
                 note: "多目的ホールで実施".to_string(),
             },

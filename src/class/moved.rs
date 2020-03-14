@@ -71,14 +71,14 @@ mod test {
             before: Class {
                 date: "2019-12-03".to_string(),
                 periods: [1, 2].to_vec(),
-                class_name: "ディジタル応用".to_string(),
+                name: "ディジタル応用".to_string(),
                 teacher: "川波".to_string(),
                 note: "".to_string(),
             },
             after: Class {
                 date: "2019-12-03".to_string(),
                 periods: [1, 2].to_vec(),
-                class_name: "国語III".to_string(),
+                name: "国語III".to_string(),
                 teacher: "杉山".to_string(),
                 note: "入替".to_string(),
             },

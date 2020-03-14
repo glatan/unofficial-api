@@ -14,7 +14,7 @@ pub struct Class {
     pub(crate) date: String,
     pub(crate) periods: Vec<u8>,
     #[serde(rename = "className")]
-    pub(crate) class_name: String,
+    pub(crate) name: String,
     pub(crate) teacher: String,
     pub(crate) note: String,
 }
@@ -32,7 +32,7 @@ impl Class {
         Class {
             date: String::new(),
             periods: Vec::new(),
-            class_name: String::new(),
+            name: String::new(),
             teacher: String::new(),
             note: String::new(),
         }
@@ -130,9 +130,9 @@ impl Class {
             let (teacher, _) = teacher.split_at(teacher.as_bytes().len() - "）".as_bytes().len());
             class.teacher = teacher.to_string();
         }
-        // class_name
+        // name
         if !entry.is_empty() {
-            class.class_name = entry.to_string();
+            class.name = entry.to_string();
         }
         // return Err(entry.to_string());
         Ok(class)
@@ -237,9 +237,9 @@ mod test {
         assert_eq!(result, "吉田".to_string());
     }
     #[test]
-    fn class_name_test() {
+    fn name_test() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
-        let result = Class::parse(sample).unwrap().class_name;
+        let result = Class::parse(sample).unwrap().name;
         assert_eq!(result, "集合と位相".to_string());
     }
 }
