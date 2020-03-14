@@ -19,7 +19,7 @@ impl Canceled {
         }
     }
     pub fn parse(yyyymm: &str, entry: &str) -> Result<Self, ()> {
-        let mut canceled = Canceled::new();
+        let mut canceled = Self::new();
         // Convert YYYY-MM to YYYY-MM
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;

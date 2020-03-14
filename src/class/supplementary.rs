@@ -19,7 +19,7 @@ impl Supplementary {
         }
     }
     pub fn parse(yyyymm: &str, entry: &str) -> Result<Self, ()> {
-        let mut supplementary = Supplementary::new();
+        let mut supplementary = Self::new();
         // Convert YYYY-MM to YYYY-MM
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;

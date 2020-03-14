@@ -20,7 +20,7 @@ impl Moved {
         }
     }
     pub fn parse(yyyymm: &str, entry: &str) -> Result<Self, ()> {
-        let mut moved = Moved::new();
+        let mut moved = Self::new();
         // Convert YYYY-MM to YYYY-MM
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
