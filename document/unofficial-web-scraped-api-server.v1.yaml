@@ -124,8 +124,26 @@ components:
             teacher:
               type: string
         classNumber:
-          type: string
           description: 開講クラス
+          required:
+            - grade
+            - program
+          type: object
+          properties:
+            grade:
+              type: integer
+              description: 学年
+              minimum: 1
+              maximum: 5
+            program:
+              type:
+                - string
+                - integer
+              description: 系(1年は組)
+              minLength: 1
+              maxLength: 1
+              minimum: 1
+              maximum: 4
       required:
         - id
         - before
@@ -155,7 +173,25 @@ components:
         note:
           type: string
         classNumber:
-          type: string
+          type: object
+          required:
+            - grade
+            - program
+          properties:
+            grade:
+              type: integer
+              description: 学年
+              minimum: 1
+              maximum: 5
+            program:
+              type:
+                - string
+                - integer
+              description: 系(1年は組)
+              minLength: 1
+              maxLength: 1
+              minimum: 1
+              maximum: 4
       required:
         - id
         - className
@@ -186,7 +222,25 @@ components:
         note:
           type: string
         classNumber:
-          type: string
+          type: object
+          required:
+            - grade
+            - program
+          properties:
+            grade:
+              type: integer
+              description: 学年
+              minimum: 1
+              maximum: 5
+            program:
+              type:
+                - string
+                - integer
+              description: 系(1年は組)
+              minLength: 1
+              maxLength: 1
+              minimum: 1
+              maximum: 4
       required:
         - id
         - className
@@ -194,3 +248,4 @@ components:
         - date
         - teacher
         - note
+        - classNumber
