@@ -1,21 +1,21 @@
-use crate::parse::Parse;
+use crate::class::{Class, ClassNumber};
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Supplementary {
     id: String,
     #[serde(rename(serialize = "classNumber"))]
-    class_number: String,
+    class_number: ClassNumber,
     #[serde(flatten)]
-    class_info: Parse,
+    class_info: Class,
 }
 
 impl Supplementary {
     pub const fn new() -> Self {
         Supplementary {
             id: String::new(),
-            class_number: String::new(),
-            class_info: Parse::new(),
+            class_number: ClassNumber::new(),
+            class_info: Class::new(),
         }
     }
     pub fn parse(&mut self, yyyymm: &str, entry: &str) -> Result<(), ()> {
@@ -23,9 +23,9 @@ impl Supplementary {
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
         self.id = id;
-        self.class_info = Parse::class_info(&entry).unwrap();
-        self.class_number = Parse::class_number(&entry).unwrap();
-        // Parse::parse(&mut self.entry).unwrap().date : MM-DD
+        self.class_info = Class::parse(&entry).unwrap();
+        self.class_number = ClassNumber::parse(&entry).unwrap();
+        // Class::parse(&mut self.entry).unwrap().date : MM-DD
         // Convert it to YYYY-MM-DD
         let (year, _) = self.id.split_at(4);
         self.class_info.date = format!("{}-{}", year, self.class_info.date);
@@ -35,24 +35,20 @@ impl Supplementary {
 
 #[cfg(test)]
 mod test {
-    use crate::classes::supplementary::Supplementary;
-    use crate::parse::Parse;
-    #[test]
-    fn parse_class_number() {
-        let sample_id = "201912";
-        let sample = "12月20日(金) 1-3 [7・8限] 情報リテラシー（竹谷）【多目的ホールで実施】";
-        let mut supplementary = Supplementary::new();
-        supplementary.parse(sample_id, sample).unwrap();
-        assert_eq!(supplementary.class_number, "1-3".to_string());
-    }
+    use crate::class::supplementary::Supplementary;
+    use crate::class::{Class, ClassNumber};
     #[test]
     fn parse_all() {
         let sample_id = "201912";
         let sample = "12月20日(金) 1-3 [7・8限] 情報リテラシー（竹谷）【多目的ホールで実施】";
         let sample_result = Supplementary {
             id: "2019-12".to_string(),
-            class_number: "1-3".to_string(),
-            class_info: Parse {
+            class_number: ClassNumber {
+                grade: 1,
+                program: "3".to_string(),
+                former_class: false,
+            },
+            class_info: Class {
                 date: "2019-12-20".to_string(),
                 periods: [7, 8].to_vec(),
                 class_name: "情報リテラシー".to_string(),

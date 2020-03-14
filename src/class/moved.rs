@@ -1,22 +1,22 @@
-use crate::parse::Parse;
+use crate::class::{Class, ClassNumber};
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Moved {
     id: String,
     #[serde(rename(serialize = "classNumber"))]
-    class_number: String,
-    before: Parse,
-    after: Parse,
+    class_number: ClassNumber,
+    before: Class,
+    after: Class,
 }
 
 impl Moved {
     pub const fn new() -> Self {
         Moved {
             id: String::new(),
-            class_number: String::new(),
-            before: Parse::new(),
-            after: Parse::new(),
+            class_number: ClassNumber::new(),
+            before: Class::new(),
+            after: Class::new(),
         }
     }
     pub fn parse(&mut self, yyyymm: &str, entry: &str) -> Result<(), ()> {
@@ -36,10 +36,10 @@ impl Moved {
         } else {
             return Err(());
         }
-        self.before = Parse::class_info(&before).unwrap();
-        self.after = Parse::class_info(&after).unwrap();
-        self.class_number = Parse::class_number(&entry).unwrap();
-        // Parse::parse(&mut self.entry).unwrap().date : MM-DD
+        self.before = Class::parse(&before).unwrap();
+        self.after = Class::parse(&after).unwrap();
+        self.class_number = ClassNumber::parse(&entry).unwrap();
+        // Class::parse(&mut self.entry).unwrap().date : MM-DD
         // Convert it to YYYY-MM-DD
         let (year, _) = self.id.split_at(4);
         self.before.date = format!("{}-{}", year, self.before.date);
@@ -55,31 +55,27 @@ impl Moved {
 
 #[cfg(test)]
 mod test {
-    use crate::classes::moved::Moved;
-    use crate::parse::Parse;
-    #[test]
-    fn parse_class_number() {
-        let sample_id = "201912";
-        let sample = "12月3日(火) 3-C [1・2限] ディジタル応用（川波）→ 国語III（杉山）【入替】";
-        let mut moved = Moved::new();
-        moved.parse(sample_id, sample).unwrap();
-        assert_eq!(moved.class_number, "3-C".to_string());
-    }
+    use crate::class::moved::Moved;
+    use crate::class::{Class, ClassNumber};
     #[test]
     fn parse_all() {
         let sample_id = "201912";
         let sample = "12月3日(火) 3-C [1・2限] ディジタル応用（川波）→ 国語III（杉山）【入替】";
         let sample_result = Moved {
             id: "2019-12".to_string(),
-            class_number: "3-C".to_string(),
-            before: Parse {
+            class_number: ClassNumber {
+                grade: 3,
+                program: "C".to_string(),
+                former_class: false,
+            },
+            before: Class {
                 date: "2019-12-03".to_string(),
                 periods: [1, 2].to_vec(),
                 class_name: "ディジタル応用".to_string(),
                 teacher: "川波".to_string(),
                 note: "".to_string(),
             },
-            after: Parse {
+            after: Class {
                 date: "2019-12-03".to_string(),
                 periods: [1, 2].to_vec(),
                 class_name: "国語III".to_string(),
