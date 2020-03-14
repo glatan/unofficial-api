@@ -125,10 +125,11 @@ components:
               type: string
         classNumber:
           description: 開講クラス
+          type: object
           required:
             - grade
             - program
-          type: object
+            - formerClass
           properties:
             grade:
               type: integer
@@ -144,6 +145,9 @@ components:
               maxLength: 2
               minimum: 1
               maximum: 4
+            formerClass:
+              type: boolean
+              description: 従来の科かどうか
       required:
         - id
         - before
@@ -177,6 +181,7 @@ components:
           required:
             - grade
             - program
+            - formerClass
           properties:
             grade:
               type: integer
@@ -192,6 +197,9 @@ components:
               maxLength: 2
               minimum: 1
               maximum: 5
+            formerClass:
+              type: boolean
+              description: 従来の科かどうか
       required:
         - id
         - className
@@ -226,6 +234,7 @@ components:
           required:
             - grade
             - program
+            - formerClass
           properties:
             grade:
               type: integer
@@ -241,6 +250,9 @@ components:
               maxLength: 2
               minimum: 1
               maximum: 4
+            formerClass:
+              type: boolean
+              description: 従来の科かどうか
       required:
         - id
         - className
