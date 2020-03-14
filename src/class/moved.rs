@@ -61,7 +61,7 @@ mod test {
     fn parse_all() {
         let sample_id = "201912";
         let sample = "12月3日(火) 3-C [1・2限] ディジタル応用（川波）→ 国語III（杉山）【入替】";
-        let sample_result = Moved {
+        let expected = Moved {
             id: "2019-12".to_string(),
             class_number: ClassNumber {
                 grade: 3,
@@ -85,6 +85,6 @@ mod test {
         };
         let mut moved = Moved::new();
         moved.parse(sample_id, sample).unwrap();
-        assert_eq!(moved, sample_result);
+        assert_eq!(moved, expected);
     }
 }

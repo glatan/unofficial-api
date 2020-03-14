@@ -41,7 +41,7 @@ mod test {
     fn parse_all() {
         let sample_id = "201912";
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
-        let sample_result = Canceled {
+        let expected = Canceled {
             id: "2019-12".to_string(),
             class_number: ClassNumber {
                 grade: 4,
@@ -58,6 +58,6 @@ mod test {
         };
         let mut canceled = Canceled::new();
         canceled.parse(sample_id, sample).unwrap();
-        assert_eq!(canceled, sample_result);
+        assert_eq!(canceled, expected);
     }
 }

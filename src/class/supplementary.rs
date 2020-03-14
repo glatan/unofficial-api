@@ -41,7 +41,7 @@ mod test {
     fn parse_all() {
         let sample_id = "201912";
         let sample = "12月20日(金) 1-3 [7・8限] 情報リテラシー（竹谷）【多目的ホールで実施】";
-        let sample_result = Supplementary {
+        let expected = Supplementary {
             id: "2019-12".to_string(),
             class_number: ClassNumber {
                 grade: 1,
@@ -58,6 +58,6 @@ mod test {
         };
         let mut supplementary = Supplementary::new();
         supplementary.parse(sample_id, sample).unwrap();
-        assert_eq!(supplementary, sample_result);
+        assert_eq!(supplementary, expected);
     }
 }
