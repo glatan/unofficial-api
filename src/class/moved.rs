@@ -25,18 +25,21 @@ impl Moved {
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
         moved.id = id;
-        let (before, after);
-        if let Some(n) = entry.find('→') {
-            let (b, a) = entry.split_at(n);
-            before = b.to_string();
-            after = a.trim_start_matches('→').to_string();
-        } else if let Some(n) = entry.find('←') {
-            let (a, b) = entry.split_at(n);
-            before = b.to_string();
-            after = a.trim_start_matches('←').to_string();
-        } else {
-            return Err(());
-        }
+        let (before, after) =  {
+            let (before, after);
+            if let Some(n) = entry.find('→') {
+                let (b, a) = entry.split_at(n);
+                before = b.to_string();
+                after = a.trim_start_matches('→').to_string();
+            } else if let Some(n) = entry.find('←') {
+                let (b, a) = entry.split_at(n);
+                before = b.to_string();
+                after = a.trim_start_matches('←').to_string();
+            } else {
+                return Err(());
+            }
+            (before, after)
+        };
         moved.before = Class::parse(&before)?;
         moved.after = Class::parse(&after)?;
         moved.class_number = ClassNumber::parse(&entry)?;
