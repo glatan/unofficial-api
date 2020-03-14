@@ -15,7 +15,7 @@ impl Scrape {
     pub const fn new() -> Self {
         Scrape(Vec::new())
     }
-    pub async fn scrape(&mut self, yyyymm: &str, classes: Classes) -> Result<(), ()> {
+    pub async fn classes(&mut self, yyyymm: &str, classes: Classes) -> Result<(), ()> {
         let url = format!(
             "http://www.tsuyama-ct.ac.jp/oshiraseVer4/renraku/renraku{}.html",
             yyyymm

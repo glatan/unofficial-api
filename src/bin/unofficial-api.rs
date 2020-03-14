@@ -36,7 +36,7 @@ async fn get_classes(class_type: Classes) -> impl Responder {
     // let yyyymm = get_jst_yyyymm();
     let yyyymm = "201912".to_string();
     let mut scraper = Scrape::new();
-    if scraper.scrape(&yyyymm, class_type).await.is_err() {
+    if scraper.classes(&yyyymm, class_type).await.is_err() {
         // その月に何もなければ空のJSONを返す
         return format!("{:?}", serde_json::to_string(&String::new()).unwrap());
     }
