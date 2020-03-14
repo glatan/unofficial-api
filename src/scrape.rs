@@ -13,7 +13,7 @@ pub struct Scrape(pub Vec<String>);
 
 impl Scrape {
     pub const fn new() -> Self {
-        Scrape(Vec::new())
+        Self(Vec::new())
     }
     pub async fn classes(&mut self, yyyymm: &str, classes: Classes) -> Result<(), ()> {
         let url = format!(

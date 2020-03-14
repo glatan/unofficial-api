@@ -12,7 +12,7 @@ pub struct Moved {
 
 impl Moved {
     pub const fn new() -> Self {
-        Moved {
+        Self {
             id: String::new(),
             class_number: ClassNumber::new(),
             before: Class::new(),

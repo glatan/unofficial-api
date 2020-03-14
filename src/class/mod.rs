@@ -29,7 +29,7 @@ pub struct ClassNumber {
 
 impl Class {
     pub const fn new() -> Self {
-        Class {
+        Self {
             date: String::new(),
             periods: Vec::new(),
             name: String::new(),
@@ -37,7 +37,7 @@ impl Class {
             note: String::new(),
         }
     }
-    pub fn parse(mut entry: &str) -> Result<Class, ()> {
+    pub fn parse(mut entry: &str) -> Result<Self, ()> {
         // DO NOT CHANGE THE PARSE ORDER.
         entry = entry.trim();
         let mut class: Class = Class::new();
@@ -147,7 +147,7 @@ impl ClassNumber {
             former_class: true,
         }
     }
-    pub fn parse(mut entry: &str) -> Result<ClassNumber, ()> {
+    pub fn parse(mut entry: &str) -> Result<Self, ()> {
         let mut class_number = Self::new();
         // e.g. 4-S
         let entry_regex = Regex::new(r"(?P<class_number>((\w-\w)|(専.+))\S*)").unwrap();

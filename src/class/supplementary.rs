@@ -12,7 +12,7 @@ pub struct Supplementary {
 
 impl Supplementary {
     pub const fn new() -> Self {
-        Supplementary {
+        Self {
             id: String::new(),
             class_number: ClassNumber::new(),
             class: Class::new(),
