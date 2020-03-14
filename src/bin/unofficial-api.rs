@@ -35,12 +35,15 @@ async fn get_classes(class_type: Classes) -> impl Responder {
     // コンフェス期間中は授業がなく、当然休講情報等は掲載されないので、2019年12月のものを取るようにしてます
     // let yyyymm = get_jst_yyyymm();
     let yyyymm = "201912".to_string();
-    let mut scraper = Scrape::new();
-    if scraper.classes(&yyyymm, class_type).await.is_err() {
-        // その月に何もなければ空のJSONを返す
-        return format!("{:?}", serde_json::to_string(&String::new()).unwrap());
-    }
-    for c in scraper.0 {
+    let scraper = {
+        if let Ok(scraper) = Scrape::classes(&yyyymm, class_type).await {
+            scraper
+        } else {
+            // その月に何もなければ空のJSONを返す
+            return format!("{:?}", serde_json::to_string(&String::new()).unwrap());
+        }
+    };
+    for c in scraper {
         match class_type {
             Classes::Canceled => {
                 if let Ok(canceled) = Canceled::parse(&yyyymm, &c) {
