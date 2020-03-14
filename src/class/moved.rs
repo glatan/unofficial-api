@@ -19,11 +19,12 @@ impl Moved {
             after: Class::new(),
         }
     }
-    pub fn parse(&mut self, yyyymm: &str, entry: &str) -> Result<(), ()> {
+    pub fn parse(yyyymm: &str, entry: &str) -> Result<Self, ()> {
+        let mut moved = Moved::new();
         // Convert YYYY-MM to YYYY-MM
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
-        self.id = id;
+        moved.id = id;
         let (before, after);
         if let Some(n) = entry.find('→') {
             let (b, a) = entry.split_at(n);
@@ -36,20 +37,20 @@ impl Moved {
         } else {
             return Err(());
         }
-        self.before = Class::parse(&before)?;
-        self.after = Class::parse(&after)?;
-        self.class_number = ClassNumber::parse(&entry)?;
-        // Class::parse(&mut self.entry).unwrap().date : MM-DD
+        moved.before = Class::parse(&before)?;
+        moved.after = Class::parse(&after)?;
+        moved.class_number = ClassNumber::parse(&entry)?;
+        // Class::parse(&mut moved.entry).unwrap().date : MM-DD
         // Convert it to YYYY-MM-DD
-        let (year, _) = self.id.split_at(4);
-        self.before.date = format!("{}-{}", year, self.before.date);
-        if self.after.date.is_empty() {
-            self.after.date = self.before.date.clone();
+        let (year, _) = moved.id.split_at(4);
+        moved.before.date = format!("{}-{}", year, moved.before.date);
+        if moved.after.date.is_empty() {
+            moved.after.date = moved.before.date.clone();
         } else {
-            self.after.date = format!("{}-{}", year, self.after.date);
+            moved.after.date = format!("{}-{}", year, moved.after.date);
         }
-        self.after.periods = self.before.periods.clone();
-        Ok(())
+        moved.after.periods = moved.before.periods.clone();
+        Ok(moved)
     }
 }
 

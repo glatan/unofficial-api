@@ -43,8 +43,7 @@ async fn get_classes(class_type: Classes) -> impl Responder {
     for c in scraper.0 {
         match class_type {
             Classes::Canceled => {
-                let mut canceled = Canceled::new();
-                if canceled.parse(&yyyymm, &c).is_ok() {
+                if let Ok(canceled) = Canceled::parse(&yyyymm, &c) {
                     if resp.len() < 10 {
                         resp.push(serde_json::to_string(&canceled).unwrap());
                     } else {
@@ -53,8 +52,7 @@ async fn get_classes(class_type: Classes) -> impl Responder {
                 }
             }
             Classes::Moved => {
-                let mut moved = Moved::new();
-                if moved.parse(&yyyymm, &c).is_ok() {
+                if let Ok(moved) = Moved::parse(&yyyymm, &c) {
                     if resp.len() < 10 {
                         resp.push(serde_json::to_string(&moved).unwrap());
                     } else {
@@ -63,8 +61,7 @@ async fn get_classes(class_type: Classes) -> impl Responder {
                 }
             }
             Classes::Supplementary => {
-                let mut supplementary = Supplementary::new();
-                if supplementary.parse(&yyyymm, &c).is_ok() {
+                if let Ok(supplementary) = Supplementary::parse(&yyyymm, &c) {
                     if resp.len() < 10 {
                         resp.push(serde_json::to_string(&supplementary).unwrap());
                     } else {

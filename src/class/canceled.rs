@@ -18,18 +18,19 @@ impl Canceled {
             class: Class::new(),
         }
     }
-    pub fn parse(&mut self, yyyymm: &str, entry: &str) -> Result<(), ()> {
+    pub fn parse(yyyymm: &str, entry: &str) -> Result<Self, ()> {
+        let mut canceled = Canceled::new();
         // Convert YYYY-MM to YYYY-MM
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
-        self.id = id;
-        self.class = Class::parse(&entry)?;
-        self.class_number = ClassNumber::parse(&entry)?;
-        // Class::parse(&mut self.entry).unwrap().date : MM-DD
+        canceled.id = id;
+        canceled.class = Class::parse(&entry)?;
+        canceled.class_number = ClassNumber::parse(&entry)?;
+        // Class::parse(&mut canceled.entry).unwrap().date : MM-DD
         // Convert it to YYYY-MM-DD
-        let (year, _) = self.id.split_at(4);
-        self.class.date = format!("{}-{}", year, self.class.date);
-        Ok(())
+        let (year, _) = canceled.id.split_at(4);
+        canceled.class.date = format!("{}-{}", year, canceled.class.date);
+        Ok(canceled)
     }
 }
 

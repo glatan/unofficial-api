@@ -18,18 +18,19 @@ impl Supplementary {
             class: Class::new(),
         }
     }
-    pub fn parse(&mut self, yyyymm: &str, entry: &str) -> Result<(), ()> {
+    pub fn parse(yyyymm: &str, entry: &str) -> Result<Self, ()> {
+        let mut supplementary = Supplementary::new();
         // Convert YYYY-MM to YYYY-MM
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
-        self.id = id;
-        self.class = Class::parse(&entry)?;
-        self.class_number = ClassNumber::parse(&entry)?;
-        // Class::parse(&mut self.entry).unwrap().date : MM-DD
+        supplementary.id = id;
+        supplementary.class = Class::parse(&entry)?;
+        supplementary.class_number = ClassNumber::parse(&entry)?;
+        // Class::parse(&mut supplementary.entry).unwrap().date : MM-DD
         // Convert it to YYYY-MM-DD
-        let (year, _) = self.id.split_at(4);
-        self.class.date = format!("{}-{}", year, self.class.date);
-        Ok(())
+        let (year, _) = supplementary.id.split_at(4);
+        supplementary.class.date = format!("{}-{}", year, supplementary.class.date);
+        Ok(supplementary)
     }
 }
 
