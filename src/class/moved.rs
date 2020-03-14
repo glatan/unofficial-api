@@ -84,8 +84,7 @@ mod test {
                 note: "入替".to_string(),
             },
         };
-        let mut moved = Moved::new();
-        moved.parse(sample_id, sample).unwrap();
+        let moved = Moved::parse(sample_id, sample).unwrap();
         assert_eq!(moved, expected);
     }
 }

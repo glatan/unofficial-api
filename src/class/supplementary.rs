@@ -57,8 +57,7 @@ mod test {
                 note: "多目的ホールで実施".to_string(),
             },
         };
-        let mut supplementary = Supplementary::new();
-        supplementary.parse(sample_id, sample).unwrap();
+        let supplementary = Supplementary::parse(sample_id, sample).unwrap();
         assert_eq!(supplementary, expected);
     }
 }

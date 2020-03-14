@@ -57,8 +57,7 @@ mod test {
                 note: "補講実施予定".to_string(),
             },
         };
-        let mut canceled = Canceled::new();
-        canceled.parse(sample_id, sample).unwrap();
+        let canceled = Canceled::parse(sample_id, sample).unwrap();
         assert_eq!(canceled, expected);
     }
 }
