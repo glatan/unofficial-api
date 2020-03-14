@@ -242,4 +242,15 @@ mod test {
         let result = Class::parse(sample).unwrap().name;
         assert_eq!(result, "集合と位相".to_string());
     }
+    #[test]
+    fn parse_class_name() {
+        let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
+        let expected = ClassNumber {
+            grade: 4,
+            program: "S".to_string(),
+            former_class: false,
+        };
+        let result = ClassNumber::parse(sample).unwrap();
+        assert_eq!(result, expected);
+    }
 }
