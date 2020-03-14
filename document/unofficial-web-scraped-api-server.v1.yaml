@@ -141,7 +141,7 @@ components:
                 - integer
               description: 系(1年は組)
               minLength: 1
-              maxLength: 1
+              maxLength: 2
               minimum: 1
               maximum: 4
       required:
@@ -189,9 +189,9 @@ components:
                 - integer
               description: 系(1年は組)
               minLength: 1
-              maxLength: 1
+              maxLength: 2
               minimum: 1
-              maximum: 4
+              maximum: 5
       required:
         - id
         - className
@@ -238,7 +238,7 @@ components:
                 - integer
               description: 系(1年は組)
               minLength: 1
-              maxLength: 1
+              maxLength: 2
               minimum: 1
               maximum: 4
       required:
