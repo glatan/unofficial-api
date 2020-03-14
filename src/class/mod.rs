@@ -213,31 +213,31 @@ impl ClassNumber {
 mod test {
     use crate::class::{Class, ClassNumber};
     #[test]
-    fn date_parse() {
+    fn parse_date() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
         let result = Class::parse(sample).unwrap().date;
         assert_eq!(result, "12-05".to_string());
     }
     #[test]
-    fn period_parse() {
+    fn parse_period() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
         let result = Class::parse(sample).unwrap().periods;
         assert_eq!(result, [3, 4]);
     }
     #[test]
-    fn note_parse() {
+    fn parse_note() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
         let result = Class::parse(sample).unwrap().note;
         assert_eq!(result, "補講実施予定".to_string());
     }
     #[test]
-    fn teacher_test() {
+    fn parse_teacher() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
         let result = Class::parse(sample).unwrap().teacher;
         assert_eq!(result, "吉田".to_string());
     }
     #[test]
-    fn name_test() {
+    fn parse_name() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
         let result = Class::parse(sample).unwrap().name;
         assert_eq!(result, "集合と位相".to_string());
