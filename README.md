@@ -31,4 +31,4 @@ Podmanで実行したい場合は"docker"を"podman"に置き換えて実行す�
 
 ## LICENSE
 
-* GNU Affero General Public License, Version 3, ([LICENSE](./LICENSE))
+GNU Affero General Public License, Version 3, ([LICENSE](./LICENSE))
