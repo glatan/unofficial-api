@@ -1,0 +1,19 @@
+targets = [
+    { triple = "x86_64-unknown-linux-gnu" },
+    { triple = "x86_64-unknown-linux-musl" },
+    { triple = "x86_64-apple-darwin" },
+    { triple = "x86_64-pc-windows-msvc" },
+]
+
+[licenses]
+unlicensed = "warn"
+allow-osi-fsf-free = "both"
+default = "warn"
+allow = [
+    "Apache-2.0",
+    "MIT",
+    "MPL-2.0",
+]
+deny = [
+    "GPL-2.0"
+]
