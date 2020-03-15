@@ -124,8 +124,38 @@ components:
             teacher:
               type: string
         classNumber:
-          type: string
           description: 開講クラス
+          type: object
+          required:
+            - grade
+            - program
+            - formerClass
+            - regularCourse
+            - note
+          properties:
+            grade:
+              type: integer
+              description: 学年
+              minimum: 1
+              maximum: 5
+            program:
+              type:
+                - string
+                - integer
+              description: 系(1年は組)
+              minLength: 1
+              maxLength: 2
+              minimum: 1
+              maximum: 4
+            formerClass:
+              type: boolean
+              description: 従来の科かどうか
+            regularCourse:
+              type: boolean
+              description: 本科か専攻科か(本科ならtrue)
+            note:
+              type: string
+              description: 留学生とか数学・物理科学プログラムみたいなの"
       required:
         - id
         - before
@@ -155,7 +185,37 @@ components:
         note:
           type: string
         classNumber:
-          type: string
+          type: object
+          required:
+            - grade
+            - program
+            - formerClass
+            - regularCourse
+            - note
+          properties:
+            grade:
+              type: integer
+              description: 学年
+              minimum: 1
+              maximum: 5
+            program:
+              type:
+                - string
+                - integer
+              description: 系(1年は組)
+              minLength: 1
+              maxLength: 2
+              minimum: 1
+              maximum: 4
+            formerClass:
+              type: boolean
+              description: 従来の科かどうか
+            regularCourse:
+              type: boolean
+              description: 本科か専攻科か(本科ならtrue)
+            note:
+              type: string
+              description: 留学生とか数学・物理科学プログラムみたいなの"
       required:
         - id
         - className
@@ -186,7 +246,37 @@ components:
         note:
           type: string
         classNumber:
-          type: string
+          type: object
+          required:
+            - grade
+            - program
+            - formerClass
+            - regularCourse
+            - note
+          properties:
+            grade:
+              type: integer
+              description: 学年
+              minimum: 1
+              maximum: 5
+            program:
+              type:
+                - string
+                - integer
+              description: 系(1年は組)
+              minLength: 1
+              maxLength: 2
+              minimum: 1
+              maximum: 4
+            formerClass:
+              type: boolean
+              description: 従来の科かどうか
+            regularCourse:
+              type: boolean
+              description: 本科か専攻科か(本科ならtrue)
+            note:
+              type: string
+              description: 留学生とか数学・物理科学プログラムみたいなの"
       required:
         - id
         - className
@@ -194,3 +284,4 @@ components:
         - date
         - teacher
         - note
+        - classNumber

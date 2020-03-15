@@ -1,30 +1,49 @@
+mod canceled;
+mod moved;
+mod supplementary;
+
+pub use canceled::Canceled;
+pub use moved::Moved;
+pub use supplementary::Supplementary;
+
 use regex::Regex;
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize)]
-pub struct Parse {
+pub struct Class {
     pub(crate) date: String,
     pub(crate) periods: Vec<u8>,
     #[serde(rename = "className")]
-    pub(crate) class_name: String,
+    pub(crate) name: String,
     pub(crate) teacher: String,
     pub(crate) note: String,
 }
 
-impl Parse {
+#[derive(Debug, PartialEq, Serialize)]
+pub struct ClassNumber {
+    pub(crate) grade: u8,
+    pub(crate) program: String,
+    #[serde(rename = "formerClass")]
+    pub(crate) former_class: bool,
+    #[serde(rename = "regularCourse")]
+    pub(crate) regular_course: bool,
+    pub(crate) note: String,
+}
+
+impl Class {
     pub const fn new() -> Self {
-        Parse {
+        Self {
             date: String::new(),
             periods: Vec::new(),
-            class_name: String::new(),
+            name: String::new(),
             teacher: String::new(),
             note: String::new(),
         }
     }
-    pub fn class_info(mut entry: &str) -> Result<Parse, ()> {
+    pub fn parse(mut entry: &str) -> Result<Self, ()> {
         // DO NOT CHANGE THE PARSE ORDER.
         entry = entry.trim();
-        let mut class_info: Parse = Parse::new();
+        let mut class: Class = Class::new();
         // note
         let note_regex = Regex::new(r"(【.+】)+$").unwrap();
         if let Some(note_index) = note_regex.find(entry) {
@@ -32,7 +51,7 @@ impl Parse {
             entry = other.trim_end();
             let trimer: &[_] = &['【', '】'];
             // <note>, <note>
-            class_info.note = note.trim_matches(trimer).replace("】【", ",");
+            class.note = note.trim_matches(trimer).replace("】【", ",");
         }
         // date
         let date_regex = Regex::new(r"^(\d+月\d+日)\(.+\)").unwrap();
@@ -58,7 +77,7 @@ impl Parse {
                     _ => day.to_string(),
                 }
             };
-            class_info.date = format!("{}-{}", month, day);
+            class.date = format!("{}-{}", month, day);
         }
         // Trim class_number
         let class_number_regex = Regex::new(r"^((\w-\w)|(専.+))\S*").unwrap();
@@ -88,11 +107,11 @@ impl Parse {
             }
             if period_range.len() == 1 {
                 // 要素が1つの場合はそのまま追加
-                class_info.periods.push(period_range[0]);
+                class.periods.push(period_range[0]);
             } else if period_range.len() == 2 {
                 // 要素が2つの場合は1つ目から2つ目までの自然数を列挙
                 for i in period_range[0]..=period_range[1] {
-                    class_info.periods.push(i);
+                    class.periods.push(i);
                 }
             } else {
                 panic!("Period: {:?} is invalided value.", period_range);
@@ -112,62 +131,138 @@ impl Parse {
             // "（", "）": どちらも1byte文字ではないのでバイト列にして区切る地点を決めている
             let (_, teacher) = teacher.split_at("（".as_bytes().len());
             let (teacher, _) = teacher.split_at(teacher.as_bytes().len() - "）".as_bytes().len());
-            class_info.teacher = teacher.to_string();
+            class.teacher = teacher.to_string();
         }
-        // class_name
+        // name
         if !entry.is_empty() {
-            class_info.class_name = entry.to_string();
+            class.name = entry.to_string();
         }
         // return Err(entry.to_string());
-        Ok(class_info)
+        Ok(class)
     }
-    pub fn class_number(entry: &str) -> Result<String, ()> {
-        let mut class_number = String::new();
+}
+
+impl ClassNumber {
+    pub const fn new() -> Self {
+        Self {
+            grade: 1,
+            program: String::new(),
+            former_class: true,
+            regular_course: true,
+            note: String::new(),
+        }
+    }
+    pub fn parse(mut entry: &str) -> Result<Self, ()> {
+        let mut class_number = Self::new();
         // e.g. 4-S
-        let class_number_regex = Regex::new(r"(?P<class_number>((\w-\w)|(専.+))\S*)").unwrap();
-        if let Some(c) = class_number_regex.captures(entry) {
-            class_number = c.name("class_number").unwrap().as_str().to_string();
+        let entry_regex = Regex::new(r"(?P<class_number>((\w-\w)|(専.+))\S*)").unwrap();
+        if let Some(c) = entry_regex.captures(entry) {
+            entry = c.name("class_number").unwrap().as_str();
         }
         // e.g. （数学・物理科学プログラム）
-        // let program_regex = Regex::new(r"(?P<program>（.+プログラム）)").unwrap();
-        // if let Some(c) = program_regex.captures(entry) {
-        //     class_number += c.name("program").unwrap().as_str();
-        // }
+        let program_regex = Regex::new(r"（(?P<program>.+プログラム)）").unwrap();
+        if let Some(c) = program_regex.captures(entry) {
+            class_number.note = c.name("program").unwrap().as_str().to_string();
+        }
+        // 留学生
+        if entry.contains("留学生") {
+            class_number.note = "留学生".to_string();
+        }
+        // 新カリ
+        if entry.starts_with(char::is_numeric) {
+            // 学年
+            match entry.chars().next().unwrap().to_digit(10) {
+                Some(digit) => class_number.grade = digit as u8,
+                None => return Err(()),
+            }
+            // クラス(本科1年生)
+            if let Some(n) = entry.chars().last().unwrap().to_digit(10) {
+                class_number.program = n.to_string();
+            }
+            // 系
+            for c in entry.chars() {
+                match c.to_string().as_str() {
+                    "S" => class_number.program = "S".to_string(),
+                    "M" => class_number.program = "M".to_string(),
+                    "E" => class_number.program = "E".to_string(),
+                    "C" => class_number.program = "C".to_string(),
+                    _ => continue,
+                }
+            }
+            class_number.former_class = false;
+        // 旧カリ
+        } else {
+            if entry.contains('専') {
+                // 専攻科
+                class_number.program = "専".to_string();
+                class_number.regular_course = false;
+            } else {
+                // 本科
+                for c in entry.chars() {
+                    match c.to_string().as_str() {
+                        "S" => class_number.program = "S".to_string(),
+                        "M" => class_number.program = "M".to_string(),
+                        "E" => class_number.program = "E".to_string(),
+                        "C" => class_number.program = "C".to_string(),
+                        _ => continue,
+                    }
+                }
+            }
+            for c in entry.chars() {
+                if c.is_numeric() {
+                    class_number.grade = c.to_digit(10).unwrap() as u8;
+                }
+            }
+            class_number.former_class = true;
+        }
         Ok(class_number)
     }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::parse::Parse;
+    use crate::class::{Class, ClassNumber};
     #[test]
-    fn date_parse() {
+    fn parse_date() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
-        let result = Parse::class_info(sample).unwrap().date;
+        let result = Class::parse(sample).unwrap().date;
         assert_eq!(result, "12-05".to_string());
     }
     #[test]
-    fn period_parse() {
+    fn parse_period() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
-        let result = Parse::class_info(sample).unwrap().periods;
+        let result = Class::parse(sample).unwrap().periods;
         assert_eq!(result, [3, 4]);
     }
     #[test]
-    fn note_parse() {
+    fn parse_note() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
-        let result = Parse::class_info(sample).unwrap().note;
+        let result = Class::parse(sample).unwrap().note;
         assert_eq!(result, "補講実施予定".to_string());
     }
     #[test]
-    fn teacher_test() {
+    fn parse_teacher() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
-        let result = Parse::class_info(sample).unwrap().teacher;
+        let result = Class::parse(sample).unwrap().teacher;
         assert_eq!(result, "吉田".to_string());
     }
     #[test]
-    fn class_name_test() {
+    fn parse_name() {
         let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
-        let result = Parse::class_info(sample).unwrap().class_name;
+        let result = Class::parse(sample).unwrap().name;
         assert_eq!(result, "集合と位相".to_string());
+    }
+    #[test]
+    fn parse_class_name() {
+        let sample = "12月5日(木) 4-S（数学・物理科学プログラム） [3・4限] 集合と位相（吉田）【補講実施予定】";
+        let expected = ClassNumber {
+            grade: 4,
+            program: "S".to_string(),
+            former_class: false,
+            regular_course: true,
+            note: "数学・物理科学プログラム".to_string(),
+        };
+        let result = ClassNumber::parse(sample).unwrap();
+        assert_eq!(result, expected);
     }
 }

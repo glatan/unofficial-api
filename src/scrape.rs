@@ -9,13 +9,9 @@ pub enum Classes {
 }
 
 #[derive(Debug)]
-pub struct Scrape(pub Vec<String>);
-
+pub struct Scrape;
 impl Scrape {
-    pub const fn new() -> Self {
-        Scrape(Vec::new())
-    }
-    pub async fn scrape(&mut self, yyyymm: &str, classes: Classes) -> Result<(), ()> {
+    pub async fn classes(yyyymm: &str, classes: Classes) -> Result<Vec<String>, ()> {
         let url = format!(
             "http://www.tsuyama-ct.ac.jp/oshiraseVer4/renraku/renraku{}.html",
             yyyymm
@@ -62,21 +58,20 @@ impl Scrape {
                 if kyu.is_empty() {
                     return Err(());
                 }
-                self.0 = kyu
+                Ok(kyu)
             }
             Classes::Moved => {
                 if ju.is_empty() {
                     return Err(());
                 }
-                self.0 = ju
+                Ok(ju)
             }
             Classes::Supplementary => {
                 if ho.is_empty() {
                     return Err(());
                 }
-                self.0 = ho
+                Ok(ho)
             }
         }
-        Ok(())
     }
 }
