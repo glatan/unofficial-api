@@ -130,6 +130,8 @@ components:
             - grade
             - program
             - formerClass
+            - regularCourse
+            - note
           properties:
             grade:
               type: integer
@@ -148,6 +150,12 @@ components:
             formerClass:
               type: boolean
               description: 従来の科かどうか
+            regularCourse:
+              type: boolean
+              description: 本科か専攻科か(本科ならtrue)
+            note:
+              type: string
+              description: 留学生とか数学・物理科学プログラムみたいなの"
       required:
         - id
         - before
@@ -182,6 +190,8 @@ components:
             - grade
             - program
             - formerClass
+            - regularCourse
+            - note
           properties:
             grade:
               type: integer
@@ -196,10 +206,16 @@ components:
               minLength: 1
               maxLength: 2
               minimum: 1
-              maximum: 5
+              maximum: 4
             formerClass:
               type: boolean
               description: 従来の科かどうか
+            regularCourse:
+              type: boolean
+              description: 本科か専攻科か(本科ならtrue)
+            note:
+              type: string
+              description: 留学生とか数学・物理科学プログラムみたいなの"
       required:
         - id
         - className
@@ -235,6 +251,8 @@ components:
             - grade
             - program
             - formerClass
+            - regularCourse
+            - note
           properties:
             grade:
               type: integer
@@ -253,6 +271,12 @@ components:
             formerClass:
               type: boolean
               description: 従来の科かどうか
+            regularCourse:
+              type: boolean
+              description: 本科か専攻科か(本科ならtrue)
+            note:
+              type: string
+              description: 留学生とか数学・物理科学プログラムみたいなの"
       required:
         - id
         - className
