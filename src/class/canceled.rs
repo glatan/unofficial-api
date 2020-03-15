@@ -48,6 +48,8 @@ mod test {
                 grade: 4,
                 program: "S".to_string(),
                 former_class: false,
+                regular_course: true,
+                note: "数学・物理科学プログラム".to_string(),
             },
             class: Class {
                 date: "2019-12-05".to_string(),

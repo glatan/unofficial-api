@@ -48,6 +48,8 @@ mod test {
                 grade: 1,
                 program: "3".to_string(),
                 former_class: false,
+                regular_course: true,
+                note: String::new(),
             },
             class: Class {
                 date: "2019-12-20".to_string(),

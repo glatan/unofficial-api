@@ -25,7 +25,7 @@ impl Moved {
         let (year, month) = yyyymm.split_at(4);
         let id = String::from(year) + "-" + month;
         moved.id = id;
-        let (before, after) =  {
+        let (before, after) = {
             let (before, after);
             if let Some(n) = entry.find('→') {
                 let (b, a) = entry.split_at(n);
@@ -71,6 +71,8 @@ mod test {
                 grade: 3,
                 program: "C".to_string(),
                 former_class: false,
+                regular_course: true,
+                note: String::new(),
             },
             before: Class {
                 date: "2019-12-03".to_string(),

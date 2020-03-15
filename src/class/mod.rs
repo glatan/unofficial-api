@@ -25,6 +25,9 @@ pub struct ClassNumber {
     pub(crate) program: String,
     #[serde(rename = "formerClass")]
     pub(crate) former_class: bool,
+    #[serde(rename = "regularCourse")]
+    pub(crate) regular_course: bool,
+    pub(crate) note: String,
 }
 
 impl Class {
@@ -145,6 +148,8 @@ impl ClassNumber {
             grade: 1,
             program: String::new(),
             former_class: true,
+            regular_course: true,
+            note: String::new(),
         }
     }
     pub fn parse(mut entry: &str) -> Result<Self, ()> {
@@ -155,10 +160,10 @@ impl ClassNumber {
             entry = c.name("class_number").unwrap().as_str();
         }
         // e.g. （数学・物理科学プログラム）
-        // let program_regex = Regex::new(r"(?P<program>（.+プログラム）)").unwrap();
-        // if let Some(c) = program_regex.captures(entry) {
-        //     class_number += c.name("program").unwrap().as_str();
-        // }
+        let program_regex = Regex::new(r"（(?P<program>.+プログラム)）").unwrap();
+        if let Some(c) = program_regex.captures(entry) {
+            class_number.note = c.name("program").unwrap().as_str().to_string();
+        }
         // 新カリ
         if entry.starts_with(char::is_numeric) {
             // 学年
@@ -186,6 +191,7 @@ impl ClassNumber {
             if entry.contains('専') {
                 // 専攻科
                 class_number.program = "専".to_string();
+                class_number.regular_course = false;
             } else {
                 // 本科
                 for c in entry.chars() {
@@ -249,6 +255,8 @@ mod test {
             grade: 4,
             program: "S".to_string(),
             former_class: false,
+            regular_course: true,
+            note: "数学・物理科学プログラム".to_string(),
         };
         let result = ClassNumber::parse(sample).unwrap();
         assert_eq!(result, expected);
