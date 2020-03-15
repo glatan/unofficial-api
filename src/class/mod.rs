@@ -164,6 +164,10 @@ impl ClassNumber {
         if let Some(c) = program_regex.captures(entry) {
             class_number.note = c.name("program").unwrap().as_str().to_string();
         }
+        // 留学生
+        if entry.contains("留学生") {
+            class_number.note = "留学生".to_string();
+        }
         // 新カリ
         if entry.starts_with(char::is_numeric) {
             // 学年
