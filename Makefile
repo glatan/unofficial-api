@@ -1,5 +1,5 @@
 SHELL := $(shell which bash)
-CONTAINER_NAME = rust:1.40.0-slim-buster
+CONTAINER_NAME = rust:1.42.0-slim-buster
 WORKDIR = /workdir
 
 .PHONY: %.pull
@@ -20,3 +20,8 @@ WORKDIR = /workdir
 %.run-bash:
 	-@$* run --name $@ -v $(shell pwd):${WORKDIR} -w ${WORKDIR} -it ${CONTAINER_NAME} bash
 	@$* rm $@
+
+.PHONY: deploy
+deploy:
+	@heroku container:push web
+	@heroku container:release web

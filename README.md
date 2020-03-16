@@ -2,6 +2,10 @@
 
 2019年度のコンフェスの作品(のAPI部分)
 
+## デプロイ先
+
+* https://unofficial-api.herokuapp.com/
+
 ## Usage
 
 1. make docker.serve
