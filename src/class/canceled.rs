@@ -1,4 +1,7 @@
 use crate::class::{Class, ClassNumber};
+use regex::Regex;
+use reqwest;
+use scraper::{Html, Selector};
 use serde::Serialize;
 use serde_json;
 
@@ -19,6 +22,47 @@ impl Canceled {
             class: Class::new(),
         }
     }
+    pub async fn scrape(yyyymm: &str) -> Result<Vec<String>, ()> {
+        let url = format!(
+            "http://www.tsuyama-ct.ac.jp/oshiraseVer4/renraku/renraku{}.html",
+            yyyymm
+        );
+        let resp = {
+            if let Ok(resp) = reqwest::get(&url).await {
+                resp
+            } else {
+                return Err(());
+            }
+        };
+        let body = {
+            if let Ok(body) = resp.text().await {
+                body
+            } else {
+                return Err(());
+            }
+        };
+        let document = Html::parse_document(&body);
+        let selector = Selector::parse("div#contents h4, div#contents p").unwrap();
+        let contents = document
+            .select(&selector)
+            .map(|c| c.html())
+            .collect::<Vec<_>>();
+        let mut found_canceled_parent = false;
+        let mut canceled = Vec::new();
+        let trim_tag = Regex::new(r"<p>(?P<inner>.+)</p>").unwrap();
+        for content in contents {
+            if found_canceled_parent && content.starts_with("<p>") {
+                if let Some(inner) = trim_tag.captures(&content) {
+                    canceled.push(inner.name("inner").unwrap().as_str().to_string());
+                }
+            } else if content == "<h4>休講</h4>" {
+                found_canceled_parent = true;
+            } else if content.starts_with("<h4>") {
+                found_canceled_parent = false;
+            }
+        }
+        Ok(canceled)
+    }
     pub fn parse(yyyymm: &str, entry: &str) -> Result<Self, ()> {
         let mut canceled = Self::new();
         // Convert YYYY-MM to YYYY-MM
@@ -33,11 +77,19 @@ impl Canceled {
         canceled.class.date = format!("{}-{}", year, canceled.class.date);
         Ok(canceled)
     }
+    pub async fn scrape_into_iter_parse(yyyymm: &str) -> Result<Vec<Self>, ()> {
+        let parse_result = Self::scrape(yyyymm).await?;
+        let mut result = Vec::new();
+        for entry in parse_result {
+            result.push(Self::parse(yyyymm, &entry)?)
+        }
+        Ok(result)
+    }
     pub fn to_json(&self) -> Result<String, ()> {
         if let Ok(json) = serde_json::to_string(&self) {
-            return Ok(json);
+            Ok(json)
         } else {
-            return Err(());
+            Err(())
         }
     }
 }
