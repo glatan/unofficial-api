@@ -1,5 +1,6 @@
 use crate::class::{Class, ClassNumber};
 use serde::Serialize;
+use serde_json;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Canceled {
@@ -31,6 +32,13 @@ impl Canceled {
         let (year, _) = canceled.id.split_at(4);
         canceled.class.date = format!("{}-{}", year, canceled.class.date);
         Ok(canceled)
+    }
+    pub fn to_json(&self) -> Result<String, ()> {
+        if let Ok(json) = serde_json::to_string(&self) {
+            return Ok(json);
+        } else {
+            return Err(());
+        }
     }
 }
 
