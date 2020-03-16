@@ -1,3 +1,5 @@
+use std::env;
+
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use serde_json;
 // use chrono::prelude::*;
@@ -101,6 +103,13 @@ async fn get_classes_supplementary() -> impl Responder {
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
+    let port = {
+        if let Ok(port) = env::var("PORT") {
+            port
+        } else {
+            String::from("8000")
+        }
+    };
     HttpServer::new(|| {
         App::new()
             .route("/", web::get().to(HttpResponse::Ok))
@@ -115,7 +124,7 @@ async fn main() -> std::io::Result<()> {
                 web::get().to(get_classes_supplementary),
             )
     })
-    .bind("127.0.0.1:8000")?
+    .bind(format!("0.0.0.0:{}", port))?
     .run()
     .await
 }

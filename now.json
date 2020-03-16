@@ -1,9 +1,0 @@
-{
-	"name": "unofficial-api",
-	"version": 2,
-	"functions": {
-		"api/**/*.rs": {
-			"runtime": "now-rust@1.0.0"
-		}
-	}
-}
