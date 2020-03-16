@@ -1,5 +1,6 @@
 use crate::class::{Class, ClassNumber};
 use serde::Serialize;
+use serde_json;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Moved {
@@ -54,6 +55,13 @@ impl Moved {
         }
         moved.after.periods = moved.before.periods.clone();
         Ok(moved)
+    }
+    pub fn to_json(&self) -> Result<String, ()> {
+        if let Ok(json) = serde_json::to_string(&self) {
+            return Ok(json);
+        } else {
+            return Err(());
+        }
     }
 }
 

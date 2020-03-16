@@ -1,5 +1,6 @@
 use crate::class::{Class, ClassNumber};
 use serde::Serialize;
+use serde_json;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Supplementary {
@@ -31,6 +32,13 @@ impl Supplementary {
         let (year, _) = supplementary.id.split_at(4);
         supplementary.class.date = format!("{}-{}", year, supplementary.class.date);
         Ok(supplementary)
+    }
+    pub fn to_json(&self) -> Result<String, ()> {
+        if let Ok(json) = serde_json::to_string(&self) {
+            return Ok(json);
+        } else {
+            return Err(());
+        }
     }
 }
 
