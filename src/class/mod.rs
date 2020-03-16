@@ -10,6 +10,13 @@ use regex::Regex;
 use serde::Serialize;
 
 #[derive(Debug, PartialEq, Serialize)]
+pub struct Classes {
+    pub canceled: Vec<Canceled>,
+    pub moved: Vec<Moved>,
+    pub supplementary: Vec<Supplementary>,
+}
+
+#[derive(Debug, PartialEq, Serialize)]
 pub struct Class {
     pub(crate) date: String,
     pub(crate) periods: Vec<u8>,
@@ -28,6 +35,23 @@ pub struct ClassNumber {
     #[serde(rename = "regularCourse")]
     pub(crate) regular_course: bool,
     pub(crate) note: String,
+}
+
+impl Classes {
+    pub const fn new() -> Self {
+        Self {
+            canceled: Vec::new(),
+            moved: Vec::new(),
+            supplementary: Vec::new(),
+        }
+    }
+    pub fn to_json(&self) -> Result<String, ()> {
+        if let Ok(json) = serde_json::to_string(&self) {
+            Ok(json)
+        } else {
+            Err(())
+        }
+    }
 }
 
 impl Class {
