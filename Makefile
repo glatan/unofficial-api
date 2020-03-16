@@ -8,15 +8,15 @@ WORKDIR = /workdir
 
 .PHONY: %.serve
 %.serve:
-	@$* run --name $@ -p 8000:8000 -v .:${WORKDIR} -w ${WORKDIR} -it ${CONTAINER_NAME} ./init.sh
+	@$* run --name $@ -p 8000:8000 -v $(shell pwd):${WORKDIR} -w ${WORKDIR} -it ${CONTAINER_NAME} ./init.sh
 	@$* rm $@
 
 .PHONY: %.serve.release
 %.serve.release:
-	@$* run --name $@ -p 8000:8000 -v .:${WORKDIR} -w ${WORKDIR} -it ${CONTAINER_NAME} ./init.sh --release
+	@$* run --name $@ -p 8000:8000 -v $(shell pwd):${WORKDIR} -w ${WORKDIR} -it ${CONTAINER_NAME} ./init.sh --release
 	@$* rm $@
 
 .PHONY: %.run-bash
 %.run-bash:
-	-@$* run --name $@ -v .:${WORKDIR} -w ${WORKDIR} -it ${CONTAINER_NAME} bash
+	-@$* run --name $@ -v $(shell pwd):${WORKDIR} -w ${WORKDIR} -it ${CONTAINER_NAME} bash
 	@$* rm $@
