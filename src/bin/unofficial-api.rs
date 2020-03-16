@@ -1,7 +1,6 @@
 use std::env;
 
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
-use serde_json;
+use actix_web::{web, App, HttpResponse, HttpServer, Result};
 // use chrono::prelude::*;
 use unofficial_api::{Canceled, Classes, Moved, Supplementary};
 
@@ -36,7 +35,7 @@ fn get_yyyymm() -> String {
     String::from("201912")
 }
 
-async fn get_classes() -> impl Responder {
+async fn get_classes() -> Result<HttpResponse, HttpResponse> {
     let yyyymm = get_yyyymm();
     let mut classes = Classes::new();
     if let Ok(mut canceled) = Canceled::scrape_into_iter_parse(&yyyymm).await {
@@ -60,45 +59,44 @@ async fn get_classes() -> impl Responder {
             classes.supplementary = supplementary;
         }
     }
-    classes.to_json()
+    Ok(HttpResponse::Ok().json(&classes))
 }
 
-async fn get_classes_canceled() -> impl Responder {
+async fn get_classes_canceled() -> Result<HttpResponse, HttpResponse> {
     let yyyymm = get_yyyymm();
     if let Ok(mut canceled) = Canceled::scrape_into_iter_parse(&yyyymm).await {
         if canceled.len() > 10 {
-            return serde_json::to_string(&canceled.drain(0..10).collect::<Vec<Canceled>>());
+            return Ok(HttpResponse::Ok().json(&canceled.drain(0..10).collect::<Vec<Canceled>>()));
         } else {
-            return serde_json::to_string(&canceled);
+            return Ok(HttpResponse::Ok().json(&canceled));
         }
     }
-    serde_json::to_string(&String::new())
+    Err(HttpResponse::InternalServerError().body("Failed to get canceled."))
 }
 
-async fn get_classes_moved() -> impl Responder {
+async fn get_classes_moved() -> Result<HttpResponse, HttpResponse> {
     let yyyymm = get_yyyymm();
     if let Ok(mut moved) = Moved::scrape_into_iter_parse(&yyyymm).await {
         if moved.len() > 10 {
-            return serde_json::to_string(&moved.drain(0..10).collect::<Vec<Moved>>());
+            return Ok(HttpResponse::Ok().json(&moved.drain(0..10).collect::<Vec<Moved>>()));
         } else {
-            return serde_json::to_string(&moved);
+            return Ok(HttpResponse::Ok().json(&moved));
         }
     }
-    serde_json::to_string(&String::new())
+    Err(HttpResponse::InternalServerError().body("Failed to get moved."))
 }
 
-async fn get_classes_supplementary() -> impl Responder {
+async fn get_classes_supplementary() -> Result<HttpResponse, HttpResponse> {
     let yyyymm = get_yyyymm();
     if let Ok(mut supplementary) = Supplementary::scrape_into_iter_parse(&yyyymm).await {
         if supplementary.len() > 10 {
-            return serde_json::to_string(
-                &supplementary.drain(0..10).collect::<Vec<Supplementary>>(),
-            );
+            return Ok(HttpResponse::Ok()
+                .json(&supplementary.drain(0..10).collect::<Vec<Supplementary>>()));
         } else {
-            return serde_json::to_string(&supplementary);
+            return Ok(HttpResponse::Ok().json(&supplementary));
         }
     }
-    serde_json::to_string(&String::new())
+    Err(HttpResponse::InternalServerError().body("Failed to get supplementary."))
 }
 
 #[actix_rt::main]
