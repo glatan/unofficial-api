@@ -1,0 +1,18 @@
+[package]
+name = "unofficial-api"
+version = "0.1.0"
+authors = ["glatan <glatan.edu@gmail.com>"]
+edition = "2018"
+license = "AGPL-3.0"
+
+[dependencies]
+actix-web = "2"
+actix-rt = "1"
+chrono = "0.4"
+regex = "1"
+reqwest = { version = "0.10" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+scraper = "0.11"
+tokio = { version = "0.2", features = ["full"] }
+unofficial-api = { version = "0.1.0", path = "../"}
