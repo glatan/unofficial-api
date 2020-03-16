@@ -6,12 +6,6 @@
 			"runtime": "now-rust@1.0.0"
 		}
 	},
-	"builds": [
-		{
-			"src": "Cargo.toml",
-			"use": "@now/rust"
-		}
-	],
 	"routes": [
 		{
 			"src": "/",
