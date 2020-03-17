@@ -59,31 +59,45 @@ async fn get_classes() -> Result<HttpResponse, HttpResponse> {
             classes.supplementary = supplementary;
         }
     }
-    Ok(HttpResponse::Ok().json(&classes))
+    Ok(HttpResponse::Ok()
+        .header("Access-Control-Allow-Origin", "*")
+        .json(&classes))
 }
 
 async fn get_classes_canceled() -> Result<HttpResponse, HttpResponse> {
     let yyyymm = get_yyyymm();
     if let Ok(mut canceled) = Canceled::scrape_into_iter_parse(&yyyymm).await {
         if canceled.len() > 10 {
-            return Ok(HttpResponse::Ok().json(&canceled.drain(0..10).collect::<Vec<Canceled>>()));
+            return Ok(HttpResponse::Ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .json(&canceled.drain(0..10).collect::<Vec<Canceled>>()));
         } else {
-            return Ok(HttpResponse::Ok().json(&canceled));
+            return Ok(HttpResponse::Ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .json(&canceled));
         }
     }
-    Err(HttpResponse::InternalServerError().body("Failed to get canceled."))
+    Err(HttpResponse::InternalServerError()
+        .header("Access-Control-Allow-Origin", "*")
+        .body("Failed to get canceled."))
 }
 
 async fn get_classes_moved() -> Result<HttpResponse, HttpResponse> {
     let yyyymm = get_yyyymm();
     if let Ok(mut moved) = Moved::scrape_into_iter_parse(&yyyymm).await {
         if moved.len() > 10 {
-            return Ok(HttpResponse::Ok().json(&moved.drain(0..10).collect::<Vec<Moved>>()));
+            return Ok(HttpResponse::Ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .json(&moved.drain(0..10).collect::<Vec<Moved>>()));
         } else {
-            return Ok(HttpResponse::Ok().json(&moved));
+            return Ok(HttpResponse::Ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .json(&moved));
         }
     }
-    Err(HttpResponse::InternalServerError().body("Failed to get moved."))
+    Err(HttpResponse::InternalServerError()
+        .header("Access-Control-Allow-Origin", "*")
+        .body("Failed to get moved."))
 }
 
 async fn get_classes_supplementary() -> Result<HttpResponse, HttpResponse> {
@@ -91,12 +105,17 @@ async fn get_classes_supplementary() -> Result<HttpResponse, HttpResponse> {
     if let Ok(mut supplementary) = Supplementary::scrape_into_iter_parse(&yyyymm).await {
         if supplementary.len() > 10 {
             return Ok(HttpResponse::Ok()
+                .header("Access-Control-Allow-Origin", "*")
                 .json(&supplementary.drain(0..10).collect::<Vec<Supplementary>>()));
         } else {
-            return Ok(HttpResponse::Ok().json(&supplementary));
+            return Ok(HttpResponse::Ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .json(&supplementary));
         }
     }
-    Err(HttpResponse::InternalServerError().body("Failed to get supplementary."))
+    Err(HttpResponse::InternalServerError()
+        .header("Access-Control-Allow-Origin", "*")
+        .body("Failed to get supplementary."))
 }
 
 #[actix_rt::main]
