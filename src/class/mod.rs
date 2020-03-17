@@ -6,9 +6,9 @@ pub use canceled::Canceled;
 pub use moved::Moved;
 pub use supplementary::Supplementary;
 
+use crate::htmlgetter::HtmlGetter;
+
 use regex::Regex;
-use reqwest;
-use scraper::{Html, Selector};
 use serde::Serialize;
 
 use std::collections::HashMap;
@@ -50,33 +50,10 @@ impl Classes {
         }
     }
     pub async fn scrape(yyyymm: &str) -> Result<HashMap<String, Vec<String>>, ()> {
-        let url = format!(
-            "http://www.tsuyama-ct.ac.jp/oshiraseVer4/renraku/renraku{}.html",
-            yyyymm
-        );
-        let resp = {
-            if let Ok(resp) = reqwest::get(&url).await {
-                resp
-            } else {
-                return Err(());
-            }
-        };
-        let body = {
-            if let Ok(body) = resp.text().await {
-                body
-            } else {
-                return Err(());
-            }
-        };
-        let document = Html::parse_document(&body);
-        let selector = Selector::parse("div#contents h4, div#contents p").unwrap();
-        let contents = document
-            .select(&selector)
-            .map(|c| c.html())
-            .collect::<Vec<_>>();
         let mut classes = HashMap::new();
         let mut found_parent = String::new();
         let trim_tag = Regex::new(r"<p>(?P<inner>.+)</p>").unwrap();
+        let contents = HtmlGetter::get_renraku(yyyymm).await?;
         for content in contents {
             match content.as_str() {
                 "<h4>授業変更</h4>" => {
