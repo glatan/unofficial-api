@@ -37,31 +37,24 @@ fn get_yyyymm() -> String {
 
 async fn get_classes() -> Result<HttpResponse, HttpResponse> {
     let yyyymm = get_yyyymm();
-    let mut classes = Classes::new();
-    if let Ok(mut canceled) = Canceled::scrape_into_iter_parse(&yyyymm).await {
-        if canceled.len() > 10 {
-            classes.canceled = canceled.drain(0..10).collect();
-        } else {
-            classes.canceled = canceled;
+    if let Ok(mut classes) = Classes::scrape_into_iter_parse(&yyyymm).await {
+        if classes.canceled.len() > 10 {
+            classes.canceled = classes.canceled.drain(0..10).collect();
         }
-    }
-    if let Ok(mut moved) = Moved::scrape_into_iter_parse(&yyyymm).await {
-        if moved.len() > 10 {
-            classes.moved = moved.drain(0..10).collect();
-        } else {
-            classes.moved = moved;
+        if classes.moved.len() > 10 {
+            classes.moved = classes.moved.drain(0..10).collect();
         }
-    }
-    if let Ok(mut supplementary) = Supplementary::scrape_into_iter_parse(&yyyymm).await {
-        if supplementary.len() > 10 {
-            classes.supplementary = supplementary.drain(0..10).collect();
-        } else {
-            classes.supplementary = supplementary;
+        if classes.supplementary.len() > 10 {
+            classes.supplementary = classes.supplementary.drain(0..10).collect();
         }
+        Ok(HttpResponse::Ok()
+            .header("Access-Control-Allow-Origin", "*")
+            .json(&classes))
+    } else {
+        Err(HttpResponse::InternalServerError()
+            .header("Access-Control-Allow-Origin", "*")
+            .body("Failed to get classes."))
     }
-    Ok(HttpResponse::Ok()
-        .header("Access-Control-Allow-Origin", "*")
-        .json(&classes))
 }
 
 async fn get_classes_canceled() -> Result<HttpResponse, HttpResponse> {

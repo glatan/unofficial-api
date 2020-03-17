@@ -7,7 +7,11 @@ pub use moved::Moved;
 pub use supplementary::Supplementary;
 
 use regex::Regex;
+use reqwest;
+use scraper::{Html, Selector};
 use serde::Serialize;
+
+use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Classes {
@@ -44,6 +48,112 @@ impl Classes {
             moved: Vec::new(),
             supplementary: Vec::new(),
         }
+    }
+    pub async fn scrape(yyyymm: &str) -> Result<HashMap<String, Vec<String>>, ()> {
+        let url = format!(
+            "http://www.tsuyama-ct.ac.jp/oshiraseVer4/renraku/renraku{}.html",
+            yyyymm
+        );
+        let resp = {
+            if let Ok(resp) = reqwest::get(&url).await {
+                resp
+            } else {
+                return Err(());
+            }
+        };
+        let body = {
+            if let Ok(body) = resp.text().await {
+                body
+            } else {
+                return Err(());
+            }
+        };
+        let document = Html::parse_document(&body);
+        let selector = Selector::parse("div#contents h4, div#contents p").unwrap();
+        let contents = document
+            .select(&selector)
+            .map(|c| c.html())
+            .collect::<Vec<_>>();
+        let mut classes = HashMap::new();
+        let mut found_parent = String::new();
+        let trim_tag = Regex::new(r"<p>(?P<inner>.+)</p>").unwrap();
+        for content in contents {
+            match content.as_str() {
+                "<h4>授業変更</h4>" => {
+                    found_parent = "moved".to_string();
+                    classes.insert("moved".to_string(), Vec::new());
+                }
+                "<h4>休講</h4>" => {
+                    found_parent = "canceled".to_string();
+                    classes.insert("canceled".to_string(), Vec::new());
+                }
+                "<h4>補講</h4>" => {
+                    found_parent = "supplementary".to_string();
+                    classes.insert("supplementary".to_string(), Vec::new());
+                }
+                _ => {
+                    if content.starts_with("<p>") {
+                        match found_parent.as_str() {
+                            "moved" => {
+                                if let Some(inner) = trim_tag.captures(&content) {
+                                    classes
+                                        .get_mut("moved")
+                                        .unwrap()
+                                        .push(inner.name("inner").unwrap().as_str().to_string());
+                                }
+                            }
+                            "canceled" => {
+                                if let Some(inner) = trim_tag.captures(&content) {
+                                    classes
+                                        .get_mut("canceled")
+                                        .unwrap()
+                                        .push(inner.name("inner").unwrap().as_str().to_string());
+                                }
+                            }
+                            "supplementary" => {
+                                if let Some(inner) = trim_tag.captures(&content) {
+                                    classes
+                                        .get_mut("supplementary")
+                                        .unwrap()
+                                        .push(inner.name("inner").unwrap().as_str().to_string());
+                                }
+                            }
+                            _ => continue,
+                        }
+                    } else if content.starts_with("<h4>") {
+                        found_parent.clear();
+                    }
+                }
+            }
+        }
+        Ok(classes)
+    }
+    pub async fn scrape_into_iter_parse(yyyymm: &str) -> Result<Self, ()> {
+        let parse_result = Self::scrape(yyyymm).await?;
+        let mut result = Self::new();
+        for (kind, entries) in &parse_result {
+            match kind.as_str() {
+                "canceled" => {
+                    for entry in entries {
+                        result.canceled.push(Canceled::parse(yyyymm, &entry)?)
+                    }
+                }
+                "moved" => {
+                    for entry in entries {
+                        result.moved.push(Moved::parse(yyyymm, &entry)?)
+                    }
+                }
+                "supplementary" => {
+                    for entry in entries {
+                        result
+                            .supplementary
+                            .push(Supplementary::parse(yyyymm, &entry)?)
+                    }
+                }
+                _ => unreachable!(),
+            }
+        }
+        Ok(result)
     }
     pub fn to_json(&self) -> Result<String, ()> {
         if let Ok(json) = serde_json::to_string(&self) {
