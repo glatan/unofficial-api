@@ -1,9 +1,7 @@
-use crate::class::{Class, ClassNumber};
+use crate::class::{Class, ClassNumber, HtmlGetter};
+
 use regex::Regex;
-use reqwest;
-use scraper::{Html, Selector};
 use serde::Serialize;
-use serde_json;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Canceled {
@@ -23,30 +21,7 @@ impl Canceled {
         }
     }
     pub async fn scrape(yyyymm: &str) -> Result<Vec<String>, ()> {
-        let url = format!(
-            "http://www.tsuyama-ct.ac.jp/oshiraseVer4/renraku/renraku{}.html",
-            yyyymm
-        );
-        let resp = {
-            if let Ok(resp) = reqwest::get(&url).await {
-                resp
-            } else {
-                return Err(());
-            }
-        };
-        let body = {
-            if let Ok(body) = resp.text().await {
-                body
-            } else {
-                return Err(());
-            }
-        };
-        let document = Html::parse_document(&body);
-        let selector = Selector::parse("div#contents h4, div#contents p").unwrap();
-        let contents = document
-            .select(&selector)
-            .map(|c| c.html())
-            .collect::<Vec<_>>();
+        let contents = HtmlGetter::get_renraku(yyyymm).await?;
         let mut found_canceled_parent = false;
         let mut canceled = Vec::new();
         let trim_tag = Regex::new(r"<p>(?P<inner>.+)</p>").unwrap();
@@ -84,13 +59,6 @@ impl Canceled {
             result.push(Self::parse(yyyymm, &entry)?)
         }
         Ok(result)
-    }
-    pub fn to_json(&self) -> Result<String, ()> {
-        if let Ok(json) = serde_json::to_string(&self) {
-            Ok(json)
-        } else {
-            Err(())
-        }
     }
 }
 
