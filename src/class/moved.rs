@@ -1,7 +1,8 @@
 use crate::class::{Class, ClassNumber, HtmlGetter};
+
 use regex::Regex;
 use serde::Serialize;
-use serde_json;
+
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Moved {
     id: String,
@@ -81,13 +82,6 @@ impl Moved {
             moved.push(Self::parse(yyyymm, &entry)?);
         }
         Ok(moved)
-    }
-    pub fn to_json(&self) -> Result<String, ()> {
-        if let Ok(json) = serde_json::to_string(&self) {
-            Ok(json)
-        } else {
-            Err(())
-        }
     }
 }
 

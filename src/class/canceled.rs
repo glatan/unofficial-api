@@ -1,7 +1,7 @@
 use crate::class::{Class, ClassNumber, HtmlGetter};
+
 use regex::Regex;
 use serde::Serialize;
-use serde_json;
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct Canceled {
@@ -59,13 +59,6 @@ impl Canceled {
             result.push(Self::parse(yyyymm, &entry)?)
         }
         Ok(result)
-    }
-    pub fn to_json(&self) -> Result<String, ()> {
-        if let Ok(json) = serde_json::to_string(&self) {
-            Ok(json)
-        } else {
-            Err(())
-        }
     }
 }
 

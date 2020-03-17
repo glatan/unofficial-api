@@ -132,13 +132,6 @@ impl Classes {
         }
         Ok(result)
     }
-    pub fn to_json(&self) -> Result<String, ()> {
-        if let Ok(json) = serde_json::to_string(&self) {
-            Ok(json)
-        } else {
-            Err(())
-        }
-    }
 }
 
 impl Class {
