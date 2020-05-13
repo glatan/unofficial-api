@@ -1,5 +1,5 @@
 SHELL := $(shell which bash)
-CONTAINER_NAME = rust:1.42.0-slim-buster
+CONTAINER_NAME = rust:1.43-slim-buster
 WORKDIR = /workdir
 
 .PHONY: %.pull
